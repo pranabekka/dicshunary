@@ -1,67 +1,25 @@
-this is a quick summary of the different v* experiments,
-followed by my notes at the moment after the dashed line.
-there's an svg file for visualisations outside this repo
-
-v0 is a style experiment
-
-v1 is an SPA frontend experiment
-using a single html file with style and script tags
-
-v2 is a websocket experiment
-client sends text to server
-server sends text to client
-
-v3 adds some parsing
-client sends json string to server
-server parses and sends json string back
-
-----------------------------------------------------------
-
-kay howdy
-
-mock up cards?
-
-aight, i'm using templates for pages as well as components
-so i want the functions for getting and applying templates
-inside a render function
-instead of accessible everywhere else
-
-have a look at what data is being passed around
-
-dictionary is a game where players take turns giving a word
-they have 
+##  game description, breakdown
 
 dictionary is a word game
-where one player gives a word
-that nobody else knows
-they write down the actual definition
-everyone else writes their own definitions
-at the end everyone votes for which definition they think is true
-they cannot vote for their own definitions
-the word-giver gets points for each player who doesn't get theirs
-the false definition players get a point for each player who guesses theirs
-
 multiple rounds
-one giver, rest guessers
-giver gives an unknown word
+one word giver, rest guessers
+giver changes every round
+round starts with giver giving an unknown word
 everyone secretly writes a definition and submits to giver
 the giver's must be correct, and guessers' should be convincing
 at end giver reads all definitions
 and guessers vote for which they think is true
+giver only registers votes
 giver gets points for each player who guesses incorrect definition
 guessers get points for each player picking their incorrect definition
 the giver reveals who wrote which guess
-the next player then becomes giver
-+
-does the giver also vote?
-no, i don't think they do
+round ends
+and new starts with next player as giver
 
-one variations could be completely made up words and/or definitions
-everybody writes and votes secretly
-including the giver
-the giver doesn't know who wrote what
-nobody can vote for their own
-the giver does read them all out though
+
+##  data, names
+
+derived from description
 
 player-list
 player = id, name
@@ -78,8 +36,36 @@ definition = body, author
 author = player-id
 giver = player-id
 definition-list
-+
+
 everything else can be derived from this, i think
+
+
+## views
+
+there's not much going on
+could probably just draw the page from scratch
+whenever required
+
+i'm using template elements for pages as well as components
+so i want the functions for getting and applying templates
+inside a render function
+instead of accessible everywhere else
+
+the other approach is creating a function
+that automatically creates elements
+like htm(tag, props, children)
+which makes splicing values in easier
+
+templates is verbose, but html defs are simple,
+a custom function requires creating it,
+but is much easier overall
+
+templates mean components and pages in html
+but it needs a nicer interface
+like a function to fetch and fill templates
+
+
+## voting 
 
 after the giver reads all the definitions
 at the bottom will be a button to begin voting?
@@ -89,9 +75,18 @@ it'll encourage them to look down
 instead of talk to each other
 or even talk to the giver
 
-could use classes to make properties immutable
-hopefull that serialises well?
-or just object.freeze() them
+so have the giver register people's votes
+and have the giver read out scores as well
+i.e., don't show score on all clients
+though there is a lobby situation
+between games
+that could be stripped out
+oh, but lobby allows reordering players
+and reassigning giver
+especially if someone joins mid-game
+
+
+##
 
 clients store player info client-side
 and allow editing name before sending stuff over
@@ -99,100 +94,35 @@ if the info is stored, name is filled in
 and id is sent over
 if not stored, name is blank, id is generated
 
-so the built-in uuid method
-is only available in https since 2022
-so i'll have to create my own random id
-
-service workers have an client.id property
-that's universally unique
-and available since 2018
-hmm... those might not run in http either
-and it's probably faster to ignore workers
-
-a basic id function
-could just randomly pick from a list of letters and numbers
-if there's a collission,
-the server can inform the client
-and the client can redo it
-and i can accept a "type" to tag the uuids with a prefix
-
-v2-2025-06-23
-summary
-shows the server client split
-and how to stitch together http and ws server
-to test run server.js with deno
-then open browser to given ip and check console
-this doesn't handle onclose and onerror
-+
-using a server client split
-with server split to serving app via http
-and co-ordinating clients via websockets
-the first test is to just serve the html
-and have the client and server communicating
-alright, that's working quite well
-pieced together from MDN's example for websocket server in deno
-https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API/Writing_a_WebSocket_server_in_JavaScript_Deno
-works pretty well
-i think i should leave it like this
-just to show the split
-
-v3-2025-06-23
-summary
-generate player ids and parse messages
-client sends join message on connection
-server gens id for them, saves it, sends it back
-client parses returned data
-+
-do player id stuff, i think
-just send it over and store on server
-pair it with reconnection
-by storing on client
-test by open tab, check console for ack
-close tab, reopen tab, check console
-also check server logs
-aight, imma have idgen server side
-so clients send a join message with name
-and optional id field, present if stored
-server sends ack, with id if required
-ack includes existing relevant state
-such as other connected players
-for this one it's _other_ connected players
-maybe storing is a bit too much for this one
-i think i have them sending messages
-and actually communicating
-instead of saying just anything
-
 make the clients shallow, i think
 little state and verification
+draw whatever the server tells them
+trust in the server
 
-v4 should probably be messaging specific clients
+
+##
+
+test messaging specific clients
 do that by storing sockets in a global var
 pair it with id for access
 
-should idgen() be server side?
-send id over the socket?
-socket.send(`{ connID: ${idgen()} }`);
-can i send a js obj directly?
-should use json.stringify to avoid dumb syntax errors
-i'll be using the json api to parse it on clients
 
-i should just init jj here
-there's no real reason to hop back and forth
-or view many at the same time
-and that should be easy with jj anyway
-and if i did, i could use jj workspaces
-https://matklad.github.io/2024/07/25/git-worktrees.html
-then i can also evolve this readme over time
-cut out stuff without losing it
-so that it doesn't get in the way
-finish this version then make a snapshot commit
+##
 
-perhaps join is sent immediately
+perhaps join is sent without user input
+with id if stored, else expect id
 and name is added later if not existing
 you can rename at any time
 so just send it along with id
 any message other than join requires id
-maybe with id is a rejoin message
+
+this might be a bad idea
+or i remember thinking so
+it does allow sending back game state instantly
+without waiting for user input
+
+
+##
 
 does a disconnect count as error or close?
 i guess close is when the client calls ws.close()
@@ -200,14 +130,35 @@ so it'll almost always be an error
 does error have additional data?
 will have to see
 
+
+##
+
+generate game id when server starts
+send it to clients on join
+and maybe with all messages
+store it on the client
+so that it can check with the server
+if the same game is running
+
+
+##
+
 should i have something to make messages quickly?
 message.join(required, data)?
 or message(type, {data})?
 would ensure messages have a type
 and it could stringify it
 message.whatever() ensures i use an actual message type
+a tagged enum of sorts
+
+
+##
 
 there are incoming messages and outgoing messages
 call them msgIn and msgOut?
+in the server functions handling client messages
+
+
+##
 
 add date/time to logs?
