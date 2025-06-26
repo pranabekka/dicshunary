@@ -1,0 +1,38 @@
+* {
+	box-sizing: border-box;
+}
+
+:root {
+	--background: #ffffee;
+	--foreground: #111111;
+
+	background-color: var(--background);
+	color: var(--foreground);
+	font-family: serif;
+	font-size: 14pt;
+}
+
+h1 {
+	font-size: 1.5rem;
+}
+
+input, button {
+	font-family: inherit;
+	font-size: inherit;
+	background-color: inherit;
+
+	min-height: 44px;
+	margin-top: .5rem;
+	padding: .5rem 1rem;
+}
+
+input {
+	display: block;
+	border: 2px solid var(--foreground);
+	margin-top: .5rem;
+	width: 10em;
+}
+
+button {
+	border: 2px solid var(--foreground);
+}

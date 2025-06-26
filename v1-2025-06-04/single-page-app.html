@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Dictionary</title>
+	<style>
+		* {
+			box-sizing: border-box;
+		}
+
+		:root {
+			--foreground: #441111;
+			--background: #ffffee;
+
+			font-family: serif;
+			font-size: 14pt;
+			color: var(--foreground);
+			background-color: var(--background);
+		}
+
+		.gameTitle {
+			font-weight: bold;
+		}
+
+		input, button {
+			font-family: inherit;
+			font-size: inherit;
+			background-color: inherit;
+			border: 2px solid var(--foreground);
+			padding: .5rem 1rem;
+			margin-top: 1rem;
+		}
+
+		input {
+			width: 10rem;
+			display: block;
+			margin-top: .5rem;
+		}
+
+		[data-tag=card] {
+			border: 1px solid black;
+			border-radius: 8px;
+			padding: .5rem;
+		}
+
+		[data-tag=card] > [data-slot=name]:before {
+			content: '— ';
+		}
+
+		* + * {
+			margin-top: 1em;
+		}
+
+		[data-tag=error] {
+			background-color: red;
+			color: var(--foreground);
+		}
+	</style>
+</head>
+<body>
+	<header><div class=gameTitle>Dictionary</div></header>
+
+	<div id="pageTarget"></div>
+
+	<template id=pageJoin>
+		<label for=name>Name</label>
+		<input type=text id=name></input>
+		<button id='buttonJoin'>Join</button>
+	</template>
+
+	<!--
+		TODO: options to reorder and change next player
+		relegated to first player, or current reader
+	-->
+	<template id=pageWait>
+		<h2>Players</h2>
+		<h2>Score</h2>
+	</template>
+
+	<template id=pageReading>
+		<h2>Word</h2>
+		<div data-slot=word><span data-tag=error>ERROR: WORD MISSING</span></div>
+		<h2>Definitions</h2>
+		<!--p>These are shuffled.</p>
+		<p>Don’t say which is yours.</p-->
+		<div data-slot=cards></div>
+	</template>
+
+	<template id=componentCard>
+		<div data-tag=card>
+			<div data-slot=name></div>
+			<div data-slot=definition></div>
+		</div>
+	</template>
+
+	<script>
+		const pageTarget = document.getElementById('pageTarget')
+
+		function renderPage(name, data) {
+			function templateGet(name) {
+				return document.getElementById(name).content.cloneNode(true)
+			}
+
+			function pageSet(content) {
+				pageTarget.replaceChildren(...content.children)
+			}
+
+			pageSet(
+				templateGet('pageReading')
+			);
+
+			switch (name) {
+				case 'pageReading':
+					const page = templateGet(name);
+
+					const slotWord = page.querySelector('[data-slot=word]');
+					slotWord.innerText = data.word;
+
+					const slotCards = page.querySelector('[data-slot=cards]');
+					for (const card of data.cards) {
+						const component = templateGet('componentCard');
+
+						component.children[0].dataset.name = card.name;
+						component.children[0].dataset.userID = card.userID;
+
+						// Remove chance of accidentally reading name
+						const slotName = component.querySelector('[data-slot=name]');
+						slotName.remove();
+
+						const slotDefinition = component.querySelector('[data-slot=definition]');
+						slotDefinition.innerText = card.definition;
+
+						slotCards.appendChild(component);
+					}
+
+					pageSet(page);
+
+					break;
+			}
+		}
+
+		renderPage('pageReading', {
+			word: 'Perspicacious',
+			cards: [
+				{
+					name: 'Pranab',
+					userID: 'temp.asfd91lkd91ls91',
+					definition: 'Sweating a lot.',
+				},
+			]
+		})
+	</script>
+</body>
+</html>

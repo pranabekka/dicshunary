@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>v2 Client</title>
+</head>
+<body>
+	<p>Howdy</p>
+	<script>
+		const ws = new WebSocket(
+			'ws://' + window.location.href.split('/')[2]
+		)
+
+		ws.onopen = (e) => {
+			ws.send('howdy');
+		}
+
+		ws.onmessage = (e) => {
+			console.log(e.data);
+		}
+	</script>
+</body>
+</html>
