@@ -45,6 +45,10 @@ everything else can be derived from this, i think
 there's not much going on
 could probably just draw the page from scratch
 whenever required
+except when users might be filling in stuff
+like their name, the word, their definition, or votes
+though i will discard that state in some cases
+like giver starting game while a guesser fills name
 
 using a function that automatically creates elements
 with props and children
@@ -71,6 +75,13 @@ oh, but lobby allows reordering players
 and reassigning giver
 especially if someone joins mid-game
 
+save score with a round number
+track round number
+because a player might join after several rounds
+so their first score needs to be associated
+with the round they joined
+same for players that disconnect for a few rounds
+
 
 ##
 
@@ -88,7 +99,7 @@ trust in the server
 
 ##  name
 
-suffix random letters if same
+suffix random letters if same name
 players should be able to play
 without having to fix name error
 
@@ -106,6 +117,14 @@ then there's no collision
 and no reason to do anything
 users can also type "<name> (z)"
 and it wouldn't matter
+having tried it out, it looks a bit odd
+and even random numbers look a bit odd
+i think people expect incrementing numbers
+which i could do a simple check for
+but first see what the response is
+
+don't save server sent name changes to localStorage
+only apply it to running client
 
 allow renames only in lobby
 without waiting for approval or anything

@@ -29,8 +29,22 @@ ws.onmessage = (e) => {
 	console.log('--- SOCKET MESSAGE ---');
 	const message = JSON.parse(e.data);
 	console.log(message);
-	if (id === undefined) { id = message.id };
-	printInfo();
+	switch (message.type) {
+		case 'join-ack':
+			if (id === undefined) { id = message.id };
+			if (name !== message.name) { name = message.name };
+			printInfo();
+			break;
+		case 'new-player':
+			console.log(`Hi, ${message.name}!`);
+			break;
+		default:
+			console.error(
+				`%cError:%c Unknown message type: ${message.type}`,
+				'color: red; font-weight: bold',
+				''
+			);
+	}
 }
 
 ws.onerror = (e) => {

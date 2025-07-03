@@ -18,22 +18,22 @@ see the file comments for usage
 
 ## TODO/TEST
 
-[x] simple state machine to manage game state
+[x] resolve name collision with suffix
 	[x] server
-		[x] set init state as lobby
-			log it to console
-			with '=== LOBBY ===' or something
-		[x] send state updates to clients
+		[x] check for name collision
+			and add suffix before saving and sending back
+	[x] test client
+		save name sent back by server to name variable
 
 ## done
 
-[x] store and use name and id (change: lowtsxty)
-[x] make id optional for joining (change: krsotrks)
+[x] store and use name and id (changeID: lowtsxty)
+[x] make id optional for joining (changeID: krsotrks)
+[x] simple state machine to manage game state (changeID: nmyuymyn)
 
 ### later
 
-[ ] main client
-	// basically everything from test client
-	// plus views and some verification
-[ ] resolve name collision with suffix
+[ ] disconnect and reconnect
+[ ] state transition to giving word
 [ ] waiting queue for joining during reading/voting
+[~] main client: views, verification, and test-client logic 
