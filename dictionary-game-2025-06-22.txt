@@ -17,7 +17,7 @@ round ends
 and new starts with next player as giver
 
 
-##  data, names
+##  data, code names
 
 derived from description
 
@@ -88,8 +88,24 @@ trust in the server
 
 ##  name
 
-use "<name> (a)" and "<name> (b)" if same
-they can rename if they care
+suffix random letters if same
+players should be able to play
+without having to fix name error
+
+save it to player data on join
+to keep it consistent everywhere
+walk through players
+if name matches, add suffix to current
+this means send it back to client
+and client adopts name
+only change suffix of current if
+`name + suffix` collides with existing `name + suffix`
+don't treat suffix as counter, only differentiator
+if the whole name doesn't match
+then there's no collision
+and no reason to do anything
+users can also type "<name> (z)"
+and it wouldn't matter
 
 allow renames only in lobby
 without waiting for approval or anything

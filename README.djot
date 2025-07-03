@@ -18,26 +18,19 @@ see the file comments for usage
 
 ## TODO/TEST
 
-[x] store and use name and id
-	[x] server
-		[x] use client provided id, if any
-			don't worry about uuid collisions
+[x] make id optional for joining - only provide name
 	[x] test client
-		[x] send stored name and id
-			means cli args for test client
-			[x] parse name and id
-			[x] print name and id on join-ack receive
-				will always receive id from server
-				don't worry about uuid collisions
-			[x] print id and name on quit
-				for easy reconnect at end of long session
-			[x] throw error if no name or id
+		[x] send only name if id not provided
+	[x] server
+		[x] generate id if none provided
+
+## done
+
+[x] store and use name and id (change: lowtsxty)
 
 ### later
 
-[ ] make id optional - only provide name
-	[ ] test client
-		[ ] pass only name if id not provided
-	[ ] server
-		[?] generate id if none provided
 [ ] main client
+	// basically everything from test client
+	// plus views and some verification
+[ ] resolve name collision with suffix

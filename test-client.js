@@ -1,9 +1,13 @@
 'use strict';
 
+console.log('--- START ---');
+
 let [name, id] = Deno.args.slice(0, 2)
-if (name === undefined || id === undefined) {
-	throw new Error('Name and ID required as CLI args');
+if (name === undefined) {
+	throw new Error('Name is required as CLI arg');
 }
+
+printInfo();
 
 function printInfo() {
 	console.log('Name: ' + name);
