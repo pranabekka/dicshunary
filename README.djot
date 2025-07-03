@@ -16,28 +16,28 @@ relies on being served to get server url and connect
 for connecting to the server and testing it.
 see the file comments for usage
 
-## TODO
+## TODO/TEST
 
-*and test*
-
-[ ] store and use name and id
-	[ ] server
-		[ ] use client provided id, if any
+[x] store and use name and id
+	[x] server
+		[x] use client provided id, if any
 			don't worry about uuid collisions
-	[ ] test client
-		[ ] send stored name and id
+	[x] test client
+		[x] send stored name and id
 			means cli args for test client
-			[ ] parse name and id
-			[ ] print name and id on receive or send
+			[x] parse name and id
+			[x] print name and id on join-ack receive
+				will always receive id from server
 				don't worry about uuid collisions
-			[ ] print id and name on quit
+			[x] print id and name on quit
 				for easy reconnect at end of long session
-				// capture end sig and reprint
-				// Deno.addSignalListener("SIG{TERM,INT}", handler)
-			[ ] throw error if no name
+			[x] throw error if no name or id
 
 ### later
 
 [ ] make id optional - only provide name
 	[ ] test client
+		[ ] pass only name if id not provided
+	[ ] server
+		[?] generate id if none provided
 [ ] main client
