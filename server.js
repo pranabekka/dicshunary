@@ -31,7 +31,7 @@ function wsHandler(req) {
 
 			let playerId;
 			do {
-				playerId = idGen('player');
+				playerId = 'player-' + crypto.randomUUID();
 			} while (players[playerId]);
 
 			players[playerId] = {name: playerName, socket};
@@ -53,31 +53,6 @@ function wsHandler(req) {
 			socket.send(
 				JSON.stringify(messageOut)
 			);
-
-			function idGen(tag) {
-				const len = 15
-				const chars = [
-					'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h',
-					'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p',
-					'q', 'r', 's', 't', 'u', 'v', 'w', 'x',
-					'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F',
-					'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N',
-					'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V',
-					'W', 'X', 'Y', 'Z', '0', '1', '2', '3',
-					'4', '5', '6', '7', '8', '9',
-				]
-
-				const parts = [tag, '-'];
-
-				for (let i = 0; i < len; i++) {
-					const randIdx = Math.floor(
-						Math.random() * (chars.length - 1)
-					);
-					parts.push(chars[randIdx]);
-				}
-
-				return parts.join('');
-			}
 		}
 	}
 
