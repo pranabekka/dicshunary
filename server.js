@@ -15,6 +15,25 @@ function wsHandler(req) {
 		console.log('NEW CONN');
 	}
 
+	socket.onerror = (e) => {
+		console.error('SOCKET ERROR');
+		console.error(e.message);
+		for (const playerId in players) {
+			if (players[playerId].socket === socket) {
+				console.error(playerId);
+			}
+		}
+	}
+
+	socket.onclose = (e) => {
+		console.log('SOCKET CLOSE');
+		for (const playerId in players) {
+			if (players[playerId].socket === socket) {
+				console.log(playerId);
+			}
+		}
+	}
+
 	socket.onmessage = (e) => {
 		console.log(`SOCKET MESSAGE`);
 
