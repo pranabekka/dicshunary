@@ -115,7 +115,7 @@ to delete component and send rename message
 pretty straightforward this
 
 
-## localStorage
+##  localStorage
 
 prefix items with game name and version
 because localStorage is same with url
@@ -128,7 +128,7 @@ maybe make it a single key with nested data
 use stringify and parse because it only stores strings
 
 
-## join
+##  join
 
 request rejoin without input if data is stored
 if not stored, get name then join
@@ -223,6 +223,62 @@ or when it's figured out more?
 maybe do it when i get my first few errors
 
 
+##  waiting queue
+
+player can join in and start at any time except voting
+once giver starts reading
+it can make new entry obviously the wrong guess
+and i dont want to think of how to roll back
+and they can still chime in as they wait
+and it's a very short wait
+
+
 ##
 
 add date/time to logs?
+
+
+##  game loop
+
+so the server runs a constant loop
+as it listens for a connections
+and the socket message handler works on stuff
+and game state only changes with socket events
+that indicate user input
+so the sockets need to handle this stuff
+only onmessage and onclose, i think
+mdn says error is when socket _closes_ with error
+and onopen is doing nothing - client registers with msg
+and close doesn't manage state, only deleting sockets
+so switch on message events in onmessage
+and update state on certain messages
+alright this is workable
+
+# lobby -> giving
+
+first state transition is lobby to giving
+requires a giver and at least three total players
+
+# state error
+
+currently need a websocket message
+before detecting state detection error
+
+# state handler
+
+switching on the messages inside the state
+will make the state handling code big
+so move it into separate function
+to make state switching easier to read and edit
+and individual state handlers edited independently
+
+
+## server disconnect
+
+recovering from this would mean
+writing state to disk
+and reading it back in
+and clients would need to poll
+and a simple switch for server
+to read from file or start new game
+clear save file on start new game

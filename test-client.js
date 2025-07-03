@@ -21,7 +21,7 @@ const ws = new WebSocket(
 ws.onopen = (e) => {
 	console.log('--- SOCKET OPEN ---');
 	ws.send(
-		JSON.stringify({event: 'join', name, id})
+		JSON.stringify({type: 'join', name, id})
 	);
 }
 

@@ -18,15 +18,17 @@ see the file comments for usage
 
 ## TODO/TEST
 
-[x] make id optional for joining - only provide name
-	[x] test client
-		[x] send only name if id not provided
+[x] simple state machine to manage game state
 	[x] server
-		[x] generate id if none provided
+		[x] set init state as lobby
+			log it to console
+			with '=== LOBBY ===' or something
+		[x] send state updates to clients
 
 ## done
 
 [x] store and use name and id (change: lowtsxty)
+[x] make id optional for joining (change: krsotrks)
 
 ### later
 
@@ -34,3 +36,4 @@ see the file comments for usage
 	// basically everything from test client
 	// plus views and some verification
 [ ] resolve name collision with suffix
+[ ] waiting queue for joining during reading/voting
