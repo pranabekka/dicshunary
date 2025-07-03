@@ -27,32 +27,45 @@ function wsHandler(req) {
 		}
 
 		function joinHandler(message) {
-			const playerName = message.name;
+			const newName = message.name;
 
-			let playerId;
+			let newId;
 			do {
-				playerId = 'player-' + crypto.randomUUID();
-			} while (players[playerId]);
+				newId = 'player-' + crypto.randomUUID();
+			} while (players[newId]);
 
-			players[playerId] = {name: playerName, socket};
+			players[newId] = {name: newName, socket};
 
 			// filter out socket and currently joining player
-			const messageOut = JSON.parse(
+			const msgJoinAck = JSON.parse(
 				JSON.stringify({
 					type: 'join-ack',
-					id: playerId,
+					id: newId,
 					players,
 				})
 			);
-			for (const player in messageOut.players) {
-				delete messageOut.players[player].socket;
+			delete msgJoinAck.players[newId];
+			for (const player in msgJoinAck.players) {
+				delete msgJoinAck.players[player].socket;
 			}
-			console.log(messageOut.players);
-			delete messageOut.players[playerId];
+			console.log(msgJoinAck.players);
 
 			socket.send(
-				JSON.stringify(messageOut)
+				JSON.stringify(msgJoinAck)
 			);
+
+			const msgNewPlayer = {
+				type: 'new-player',
+				id: newId,
+				name: newName,
+			}
+			for (const playerId in players) {
+				if (playerId !== newId) {
+					players[playerId].socket.send(
+						JSON.stringify(msgNewPlayer)
+					)
+				}
+			}
 		}
 	}
 
