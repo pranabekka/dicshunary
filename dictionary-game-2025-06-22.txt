@@ -46,23 +46,9 @@ there's not much going on
 could probably just draw the page from scratch
 whenever required
 
-i'm using template elements for pages as well as components
-so i want the functions for getting and applying templates
-inside a render function
-instead of accessible everywhere else
-
-the other approach is creating a function
-that automatically creates elements
-like htm(tag, props, children)
-which makes splicing values in easier
-
-templates is verbose, but html defs are simple,
-a custom function requires creating it,
-but is much easier overall
-
-templates mean components and pages in html
-but it needs a nicer interface
-like a function to fetch and fill templates
+using a function that automatically creates elements
+with props and children
+with signature html(tag, props, ...children)
 
 
 ## voting 
@@ -143,13 +129,6 @@ would ensure messages have a type
 and it could stringify it
 message.whatever() ensures i use an actual message type
 a tagged enum of sorts
-
-
-##
-
-there are incoming messages and outgoing messages
-call them msgIn and msgOut?
-in the server functions handling client messages
 
 
 ##
