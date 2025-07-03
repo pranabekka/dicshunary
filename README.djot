@@ -1,0 +1,10 @@
+# Dictionary game
+
+for notes on game, data, and architecture ideas,
+see dictionary-game-2025-06-22.txt
+
+server.js is a deno server script
+
+client.html is sent by the server to clients.
+it's a single file with script and style tags.
+relies on server url to connect to it
