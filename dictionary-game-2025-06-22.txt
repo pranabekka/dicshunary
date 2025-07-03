@@ -102,13 +102,6 @@ trust in the server
 
 ##
 
-test messaging specific clients
-do that by storing sockets in a global var
-pair it with id for access
-
-
-##
-
 perhaps join is sent without user input
 with id if stored, else expect id
 and name is added later if not existing
