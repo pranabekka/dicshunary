@@ -7,4 +7,8 @@ server.js is a deno server script
 
 client.html is sent by the server to clients.
 it's a single file with script and style tags.
-relies on server url to connect to it
+relies on server url to connect
+
+test-client.js is a console client deno script
+for connecting to the server and testing it.
+see the file comments for usage
