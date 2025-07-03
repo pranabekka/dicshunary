@@ -26,6 +26,27 @@
 			const message = JSON.parse(e.data);
 			console.log(message);
 		}
+
+		function html(tag, props, ...children) {
+			const el = document.createElement(tag);
+
+			for (const key in props) {
+				el[key] = props[key];
+			}
+
+			el.append(...children);
+
+			return el;
+		}
+
+		document.body.appendChild(
+			html('div', {},
+				html('h1', {}, "howdy"),
+				html('p', {}, "ceci une paragraph"),
+				html('hr'),
+				html('p', {}, "another paragraph")
+			)
+		);
 	</script>
 </body>
 </html>
