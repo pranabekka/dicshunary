@@ -15,3 +15,29 @@ relies on being served to get server url and connect
 `test-client.js` is a console client deno script
 for connecting to the server and testing it.
 see the file comments for usage
+
+## TODO
+
+*and test*
+
+[ ] store and use name and id
+	[ ] server
+		[ ] use client provided id, if any
+			don't worry about uuid collisions
+	[ ] test client
+		[ ] send stored name and id
+			means cli args for test client
+			[ ] parse name and id
+			[ ] print name and id on receive or send
+				don't worry about uuid collisions
+			[ ] print id and name on quit
+				for easy reconnect at end of long session
+				// capture end sig and reprint
+				// Deno.addSignalListener("SIG{TERM,INT}", handler)
+			[ ] throw error if no name
+
+### later
+
+[ ] make id optional - only provide name
+	[ ] test client
+[ ] main client
