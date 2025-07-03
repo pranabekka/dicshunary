@@ -16,9 +16,10 @@ function wsHandler(req) {
 	}
 
 	socket.onmessage = (e) => {
-		console.log(`REC'D: ${e.data}`);
+		console.log(`SOCKET MESSAGE`);
 
 		const message = JSON.parse(e.data);
+		console.log(message);
 
 		switch (message.event) {
 			case 'join':
@@ -48,7 +49,6 @@ function wsHandler(req) {
 			for (const player in msgJoinAck.players) {
 				delete msgJoinAck.players[player].socket;
 			}
-			console.log(msgJoinAck.players);
 
 			socket.send(
 				JSON.stringify(msgJoinAck)
