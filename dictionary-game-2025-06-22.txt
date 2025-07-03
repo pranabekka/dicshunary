@@ -40,7 +40,7 @@ definition-list
 everything else can be derived from this, i think
 
 
-## views
+##  views
 
 there's not much going on
 could probably just draw the page from scratch
@@ -51,7 +51,7 @@ with props and children
 with signature html(tag, props, ...children)
 
 
-## voting 
+##  voting 
 
 after the giver reads all the definitions
 at the bottom will be a button to begin voting?
@@ -86,31 +86,92 @@ draw whatever the server tells them
 trust in the server
 
 
-##
+##  name
 
-perhaps join is sent without user input
-with id if stored, else expect id
-and name is added later if not existing
-you can rename at any time
-so just send it along with id
-any message other than join requires id
+use "<name> (a)" and "<name> (b)" if same
+they can rename if they care
 
-this might be a bad idea
-or i remember thinking so
-it does allow sending back game state instantly
-without waiting for user input
+allow renames only in lobby
+without waiting for approval or anything
+just an edit name button
+that creates a component then waits for submit
+to delete component and send rename message
+pretty straightforward this
 
 
-##
+## localStorage
 
-does a disconnect count as error or close?
-i guess close is when the client calls ws.close()
-so it'll almost always be an error
-does error have additional data?
-will have to see
+prefix items with game name and version
+because localStorage is same with url
+
+same url no matter backing server means
+different servers could overwrite keys
+and then clients would read and use bad data
+
+maybe make it a single key with nested data
+use stringify and parse because it only stores strings
 
 
-##
+## join
+
+request rejoin without input if data is stored
+if not stored, get name then join
+
+i considered gameId but that's not required
+server will send data for current game
+client doesn't need to do anything
+
+
+##  rejoin and disconnects
+
+delete socket on close
+on reconnect if socket doesn't exist
+add new socket
+else send "check for other tab" error
+
+guessers disconnected before submit
+means they get x for score in that round
+do not store this as a 0 score
+a bad round is not the same as absent round
+giver should wait for disconnected players
+to submit guess if they're rejoining
+or the giver can just end the round
+
+
+#  giver disconnect
+
+submit will fail if the giver disconnects
+if it does send an 'error' message back to the client
+and client shows non-modal notification with message
+next to submit button
+
+if giver purposely disconnects
+then should the round be skipped?
+have players vote to skip
+depending on the giver to do it
+can lead to game being stuck
+they could reconnect and press 'skip'
+but then why would they leave so suddenly
+have the button send skip once
+and then get disabled
+and say "waiting for everyone to skip"
+show this button only if giver disconnects
+and hide it when giver reconnects
+
+i have to tally skip votes
+declare 'skipVotes' in the innermost scope possible
+and if it matches connected player count then skip round
+
+
+##  lobby
+
+in between each round
+mainly to reorder players and change giver
+also to wait for players
+and maybe to change name
+
+
+##  game id
 
 generate game id when server starts
 send it to clients on join
@@ -118,9 +179,20 @@ and maybe with all messages
 store it on the client
 so that it can check with the server
 if the same game is running
+had an issue with disconnection
+in the uno prototype
+so i want reconnection
+but a new game isn't quite reconnection
+
+hmmm.... might not need it
+server knows if there's any history
+if there's history it can send it
+else it sends rest of game state
+sooo.... screw game id?
+yeah, i'll add it if i see a reason later
 
 
-##
+##  messaging
 
 should i have something to make messages quickly?
 message.join(required, data)?
@@ -129,6 +201,10 @@ would ensure messages have a type
 and it could stringify it
 message.whatever() ensures i use an actual message type
 a tagged enum of sorts
+
+hmmm.... more valuable when it stabilises?
+or when it's figured out more?
+maybe do it when i get my first few errors
 
 
 ##
