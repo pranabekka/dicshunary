@@ -156,6 +156,7 @@ function wsHandler(req) {
 			socket.send(
 				JSON.stringify(msgJoinAck)
 			);
+			console.log(msgJoinAck);
 
 			// notify other connected players of new player
 			const msgNewPlayer = JSON.parse(

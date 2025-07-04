@@ -18,32 +18,14 @@ see the file comments for usage
 
 ## TODO/TEST
 
-[x] disconnect
-	[x] server
-		[x] delete socket
-		[x] delete name
-			new player shouldn't collide with invisible name
-		[x] send 'disconnect' message to clients
-			with name and id
-		[x] handle disconn players for messaging
-			if socket present
-			print error message and skip
-		[x] filter from player list in messages
-			i think only join-ack message
-			sends player list for now
-	[x] test client
-		[x] actually store players
-		[x] delete player entry using id
-		[x] print remaining players, not self
-		[x] notify about disconnect
-			with disconnected name and id
 
 ## done
 
 [x] store and use name and id (changeID: lowtsxty)
 [x] make id optional for joining (changeID: krsotrks)
 [x] simple state machine to manage game state (changeID: nmyuymyn)
-[x] resolve name collision with suffix (klqyusnu)
+[x] resolve name collision with suffix (changeID: klqyusnu)
+[x] disconnect (changeID: mktwznzx)
 
 ### later
 

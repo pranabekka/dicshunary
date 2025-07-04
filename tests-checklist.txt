@@ -1,0 +1,41 @@
+EXPECT should be observable behaviour.
+in this case, that means in the logs
+because i don't have a debugger.
+while logs could be reporting message contents
+instead of actual state,
+i expect to keep good practice with that,
+be aware that it's a point of failure,
+and work out incorrect state or other hidden cause
+from actual observable behaviour
+as long as i test things.
+
+[ ] disconnect
+	[ ] remove player from clients on disconnect
+		[ ] STEP run server
+		[ ] STEP run test client
+		[ ] STEP run second test client
+		[ ] EXPECT both clients list each other
+		[ ] STEP close one client
+		[ ] EXPECT the other client lists no other players
+	[ ] record client disconnect on server
+		[ ] STEP run server
+		[ ] STEP run client
+		[ ] STEP close client
+		[ ] EXPECT server prints state
+		  with disconnected client id
+		  missing name and socket
+[ ] optional id
+	[ ] server checks join request for id
+	    and generates if missing
+		[ ] STEP run server
+		[ ] STEP run client without id
+		[ ] EXPECT server sends join acknowledgement with id
+	[ ] client sends join request without id
+	    and saves id returned from server
+		[ ] STEP run server
+		[ ] STEP run client
+		[ ] EXPECT server first prints 'ID: undefined'
+		    then prints same ID logged and sent by server
+		    from own state
+
+i want tests for joining, disconnecting, reconnecting
