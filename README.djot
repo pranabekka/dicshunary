@@ -18,6 +18,24 @@ see the file comments for usage
 
 ## TODO/TEST
 
+[x] server: refactor disconnects
+	move disconnects to separate list
+    so that i don't have to filter them out
+    when working through connected players.
+    observed behaviour should be the same
+	[x] server
+		[x] delete socket
+		[x] delete name
+		    new player shouldn't collide with invisible name
+		    well, see notes
+		[x] move to disconnected
+		[x] send 'disconnect' message to clients
+		    with name and id
+	[x] test client
+		[x] delete player entry using id
+		[x] print remaining players, not self
+		[x] notify about disconnect
+		    with disconnected name and id
 
 ## done
 

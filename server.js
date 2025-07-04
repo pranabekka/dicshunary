@@ -2,6 +2,8 @@
 
 // :: { [key: playerId]: {socket, name} }
 const players = {};
+// :: [playerId]
+const playersDisconnected = [];
 // start game in lobby
 const gameState = 'LOBBY';
 
@@ -30,21 +32,24 @@ function wsHandler(req) {
 
 	socket.onclose = (e) => {
 		console.log('--- SOCKET CLOSE ---');
-		// find and log which socket closed
 		let id;
 		let name;
+		// find and log which socket closed
 		for (const playerId in players) {
 			if (players[playerId].socket === socket) {
 				id = playerId;
 				name = players[playerId].name;
-				delete players[playerId].socket;
-				delete players[playerId].name;
-				console.log(playerId);
-				console.log('Player statuses:');
-				console.log(JSON.parse(JSON.stringify(players)));
+				console.log('Disconnected: ' + id);
 				break;
 			}
 		}
+		// move from connected to disconnected list
+		delete players[id];
+		// socket becomes invalid,
+		// and name with suffix might be pointless
+		playersDisconnected.push(id);
+		console.log(JSON.parse(JSON.stringify({players})));
+		console.log(JSON.parse(JSON.stringify({playersDisconnected})));
 
 		// notify other players of disconnect
 		const msgDisconn = JSON.parse(
@@ -167,22 +172,11 @@ function wsHandler(req) {
 				})
 			);
 			for (const playerId in players) {
+				// player is not self
 				if (playerId !== id) {
-					// player is not self
-					if (players[playerId].socket !== undefined) {
-						// player is connected
-						players[playerId].socket.send(
-							JSON.stringify(msgNewPlayer)
-						)
-					} else {
-						// player is not connected
-						console.error(
-							`%cERROR: %cPlayer not connected: ${playerId}.`
-							+ ' SKIPPING new player notification',
-							'color: red; font-weight: bold',
-							''
-						);
-					}
+					players[playerId].socket.send(
+						JSON.stringify(msgNewPlayer)
+					)
 				}
 			}
 		}
