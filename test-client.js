@@ -35,8 +35,8 @@ ws.onmessage = (e) => {
 	console.log(message);
 	switch (message.type) {
 		case 'join-ack':
-			if (id === undefined) { id = message.id };
-			if (name !== message.name) { name = message.name };
+			id = message.id;
+			name = message.name;
 			printInfo();
 			for (const playerId in message.players) {
 				otherPlayers[playerId] = message.players[playerId].name;
@@ -44,6 +44,7 @@ ws.onmessage = (e) => {
 			console.log({otherPlayers});
 			break;
 		case 'new-player':
+		case 'rejoin':
 			otherPlayers[message.id] = message.name;
 			console.log({otherPlayers});
 			break;

@@ -18,24 +18,16 @@ see the file comments for usage
 
 ## TODO/TEST
 
-[x] server: refactor disconnects
-	move disconnects to separate list
-    so that i don't have to filter them out
-    when working through connected players.
-    observed behaviour should be the same
+[x] reconnect
 	[x] server
-		[x] delete socket
-		[x] delete name
-		    new player shouldn't collide with invisible name
-		    well, see notes
-		[x] move to disconnected
-		[x] send 'disconnect' message to clients
-		    with name and id
-	[x] test client
-		[x] delete player entry using id
-		[x] print remaining players, not self
-		[x] notify about disconnect
-		    with disconnected name and id
+		[x] move id from disconn list to
+		    players list with name and socket
+		[x] send rejoin message to clients
+	[x] client
+		[x] add reconn message info to players
+		[x] set id to server sent id in join-ack
+		    server figures out if id is for old game
+		    and generates new id
 
 ## done
 
@@ -44,17 +36,23 @@ see the file comments for usage
 [x] simple state machine to manage game state (changeID: nmyuymyn)
 [x] resolve name collision with suffix (changeID: klqyusnu)
 [x] disconnect (changeID: mktwznzx)
+[x] server: refactor disconnects (changeID: klslsywr)
 
 ### later
 
-[ ] reconnect
-	[ ] server
-		[ ] add name and socket with id
-			don't worry about uuid collision
-		...
-	...
+[ ] server util function for mapping over players
+    and returning new result instead of modifying input
+    in messages to client, do id:name pairs
+    in logs, concat socket info
+	`eachPair(obj, func)` returns a new obj
+[ ] server util function to disambiguate name
+    move it out to improve readability of join handler
+    and enable reuse in other places
+[ ] server util function to copy object
+    JSON.parse(JSON.stringify(obj)) is enough
+    but makes everything verbose when used directly
 [ ] version server and clients
 	// print before anything else
 [ ] state transition to giving word
-[ ] waiting queue for joining during reading/voting
-[~] main client: views, verification, and test-client logic 
+[ ] waiting queue for join/reconnect during reading/voting
+[ ] main client: views, verification, and test-client logic 

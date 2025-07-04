@@ -104,6 +104,8 @@ function wsHandler(req) {
 		function lobbyJoinHandler(message) {
 			let name = message.name;
 			let id;
+			// joining as a new player or rejoining after disconnect
+			let joinType;
 
 			/// i want to iterate all players at least once
 			/// and check their name doesn't match
@@ -131,17 +133,31 @@ function wsHandler(req) {
 				}
 			}
 
-			if (message.id === undefined) {
-				id = 'player-' + crypto.randomUUID();
+			// check if player is reconnecting
+			// else generate new id
+			// and set joinType either way
+			if ( playersDisconnected.includes(message.id) ) {
+				joinType = 'rejoin';
+				id = message.id;
 			} else {
-				id = message.id
+				id = 'player-' + crypto.randomUUID();
+				joinType = 'new-player';
+			}
+			console.log({joinType});
+
+			// if rejoining, remove from disconn list
+			if (joinType == 'rejoin') {
+				const i = playersDisconnected.indexOf(id);
+				playersDisconnected.splice(i, 1);
 			}
 
+			// add player to active players
 			players[id] = {name, socket};
 
-			// acknowledge new player
-			// with list of other connected players
-			// without socket keys
+			// acknowledge re/joining player
+			// with disambiguated name,
+			// new/existing id,
+			// and game info
 			const msgJoinAck = JSON.parse(
 				JSON.stringify({
 					type: 'join-ack',
@@ -154,19 +170,16 @@ function wsHandler(req) {
 			delete msgJoinAck.players[id];
 			for (const playerId in msgJoinAck.players) {
 				delete msgJoinAck.players[playerId].socket;
-				if (msgJoinAck.players[playerId].name === undefined) {
-					delete msgJoinAck.players[playerId];
-				}
 			}
 			socket.send(
 				JSON.stringify(msgJoinAck)
 			);
-			console.log(msgJoinAck);
 
-			// notify other connected players of new player
-			const msgNewPlayer = JSON.parse(
+			// notify other connected players of
+			// re/joining player
+			const msgJoinRejoin = JSON.parse(
 				JSON.stringify({
-					type: 'new-player',
+					type: joinType,
 					id,
 					name,
 				})
@@ -175,10 +188,13 @@ function wsHandler(req) {
 				// player is not self
 				if (playerId !== id) {
 					players[playerId].socket.send(
-						JSON.stringify(msgNewPlayer)
+						JSON.stringify(msgJoinRejoin)
 					)
 				}
 			}
+
+			console.log({players});
+			console.log({playersDisconnected});
 		}
 	}
 

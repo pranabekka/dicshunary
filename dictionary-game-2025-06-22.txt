@@ -309,7 +309,7 @@ to make state switching easier to read and edit
 and individual state handlers edited independently
 
 
-## server disconnect
+##  server disconnect
 
 recovering from this would mean
 writing state to disk
@@ -318,3 +318,29 @@ and clients would need to poll
 and a simple switch for server
 to read from file or start new game
 clear save file on start new game
+
+
+##  don't reuse stale player uuids
+
+if the player isn't reconnecting
+send the player a newly generated uuid
+this is more a correctness thing
+since the uuid is for reconnecting
+and connecting across games is incorrect usage
+i don't really see the uuid colliding
+if it's saved across games
+i simply find it to be a logic error
+
+
+##  consider using a set for players
+
+
+##  test-client input
+
+i don't need to cancel input
+just cancel input, ignore it, and update game
+i think that should be enough
+test-client is only for dev use
+the other option would be Deno.stdin.close() or .read()
+try that if i have complications
+maybe it'll even be simpler
