@@ -18,22 +18,43 @@ see the file comments for usage
 
 ## TODO/TEST
 
-[x] resolve name collision with suffix
+[x] disconnect
 	[x] server
-		[x] check for name collision
-			and add suffix before saving and sending back
+		[x] delete socket
+		[x] delete name
+			new player shouldn't collide with invisible name
+		[x] send 'disconnect' message to clients
+			with name and id
+		[x] handle disconn players for messaging
+			if socket present
+			print error message and skip
+		[x] filter from player list in messages
+			i think only join-ack message
+			sends player list for now
 	[x] test client
-		save name sent back by server to name variable
+		[x] actually store players
+		[x] delete player entry using id
+		[x] print remaining players, not self
+		[x] notify about disconnect
+			with disconnected name and id
 
 ## done
 
 [x] store and use name and id (changeID: lowtsxty)
 [x] make id optional for joining (changeID: krsotrks)
 [x] simple state machine to manage game state (changeID: nmyuymyn)
+[x] resolve name collision with suffix (klqyusnu)
 
 ### later
 
-[ ] disconnect and reconnect
+[ ] reconnect
+	[ ] server
+		[ ] add name and socket with id
+			don't worry about uuid collision
+		...
+	...
+[ ] version server and clients
+	// print before anything else
 [ ] state transition to giving word
 [ ] waiting queue for joining during reading/voting
 [~] main client: views, verification, and test-client logic 

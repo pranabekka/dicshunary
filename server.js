@@ -31,9 +31,43 @@ function wsHandler(req) {
 	socket.onclose = (e) => {
 		console.log('--- SOCKET CLOSE ---');
 		// find and log which socket closed
+		let id;
+		let name;
 		for (const playerId in players) {
 			if (players[playerId].socket === socket) {
+				id = playerId;
+				name = players[playerId].name;
+				delete players[playerId].socket;
+				delete players[playerId].name;
 				console.log(playerId);
+				console.log('Player statuses:');
+				console.log(JSON.parse(JSON.stringify(players)));
+				break;
+			}
+		}
+
+		// notify other players of disconnect
+		const msgDisconn = JSON.parse(
+			JSON.stringify({
+				type: 'disconnect',
+				id,
+				name,
+			})
+		);
+		for (const playerId in players) {
+			if (playerId !== id) {
+				if (players[playerId].socket !== undefined) {
+					players[playerId].socket.send(
+						JSON.stringify(msgDisconn)
+					);
+				} else {
+					console.error(
+						`%cERROR: %cPlayer not connected: ${playerId}.`
+						+ ' SKIPPING disconnect notification',
+						'color: red; font-weight: bold',
+						''
+					);
+				}
 			}
 		}
 	}
@@ -101,7 +135,7 @@ function wsHandler(req) {
 			players[id] = {name, socket};
 
 			// acknowledge new player
-			// with list of other players
+			// with list of other connected players
 			// without socket keys
 			const msgJoinAck = JSON.parse(
 				JSON.stringify({
@@ -113,24 +147,41 @@ function wsHandler(req) {
 				})
 			);
 			delete msgJoinAck.players[id];
-			for (const player in msgJoinAck.players) {
-				delete msgJoinAck.players[player].socket;
+			for (const playerId in msgJoinAck.players) {
+				delete msgJoinAck.players[playerId].socket;
+				if (msgJoinAck.players[playerId].name === undefined) {
+					delete msgJoinAck.players[playerId];
+				}
 			}
 			socket.send(
 				JSON.stringify(msgJoinAck)
 			);
 
-			// notify previous players of new player
-			const msgNewPlayer = {
-				type: 'new-player',
-				id,
-				name,
-			}
+			// notify other connected players of new player
+			const msgNewPlayer = JSON.parse(
+				JSON.stringify({
+					type: 'new-player',
+					id,
+					name,
+				})
+			);
 			for (const playerId in players) {
 				if (playerId !== id) {
-					players[playerId].socket.send(
-						JSON.stringify(msgNewPlayer)
-					)
+					// player is not self
+					if (players[playerId].socket !== undefined) {
+						// player is connected
+						players[playerId].socket.send(
+							JSON.stringify(msgNewPlayer)
+						)
+					} else {
+						// player is not connected
+						console.error(
+							`%cERROR: %cPlayer not connected: ${playerId}.`
+							+ ' SKIPPING new player notification',
+							'color: red; font-weight: bold',
+							''
+						);
+					}
 				}
 			}
 		}

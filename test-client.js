@@ -9,6 +9,10 @@ if (name === undefined) {
 
 printInfo();
 
+// only those players connected to server
+// :: { [key: playerId]: {name} }
+const otherPlayers = {};
+
 function printInfo() {
 	console.log('Name: ' + name);
 	console.log('ID: ' + id);
@@ -34,9 +38,19 @@ ws.onmessage = (e) => {
 			if (id === undefined) { id = message.id };
 			if (name !== message.name) { name = message.name };
 			printInfo();
+			for (const playerId in message.players) {
+				otherPlayers[playerId] = message.players[playerId].name;
+			}
+			console.log({otherPlayers});
 			break;
 		case 'new-player':
-			console.log(`Hi, ${message.name}!`);
+			otherPlayers[message.id] = message.name;
+			console.log({otherPlayers});
+			break;
+		case 'disconnect':
+			delete otherPlayers[message.id];
+			console.log(`"${message.name}" disconnected (ID: ${message.id})`);
+			console.log({otherPlayers});
 			break;
 		default:
 			console.error(
