@@ -88,36 +88,10 @@ function wsHandler(req) {
 		}
 
 		function lobbyJoinHandler(message) {
-			let name = message.name;
+			const name = util.nameDisambiguate(message.name);
 			let id;
 			// joining as a new player or rejoining after disconnect
 			let joinType;
-
-			/// i want to iterate all active players at least once
-			/// and check their name doesn't match
-			/// if it does match i change name and do it again
-			/// if it doesn't match i move on
-			let nameCollision = 'maybe';
-			while (nameCollision == 'maybe') {
-				// detect collision
-				for (const playerId in playersActive) {
-					const playerName = playersActive[playerId].name;
-					if (name == playerName) {
-						nameCollision = 'true';
-					break;
-					}
-				}
-				// resolve current collision
-				if (nameCollision == 'true') {
-					const suffixPartOpts = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
-					const suffixP1 = suffixPartOpts[Math.floor(Math.random() * suffixPartOpts.length)];
-					const suffixP2 = suffixPartOpts[Math.floor(Math.random() * suffixPartOpts.length)];
-					name = `${name} (${suffixP1}${suffixP2})`;
-					nameCollision = 'maybe';
-				} else {
-					nameCollision = 'false';
-				}
-			}
 
 			// check if player is reconnecting
 			// else generate new id
@@ -196,3 +170,33 @@ function handler(req) {
 }
 
 Deno.serve(handler);
+
+const util = {
+	nameDisambiguate(name) {
+		let nameCollision = 'maybe';
+
+		while (nameCollision == 'maybe') {
+			// detect collision
+			for (const playerId in playersActive) {
+				const playerName = playersActive[playerId].name;
+				if (name == playerName) {
+					nameCollision = 'true';
+				break;
+				}
+			}
+
+			// resolve current collision
+			if (nameCollision == 'true') {
+				const suffixPartOpts = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
+				const suffixP1 = suffixPartOpts[Math.floor(Math.random() * suffixPartOpts.length)];
+				const suffixP2 = suffixPartOpts[Math.floor(Math.random() * suffixPartOpts.length)];
+				name = `${name} (${suffixP1}${suffixP2})`;
+				nameCollision = 'maybe';
+			} else {
+				nameCollision = 'false';
+			}
+		}
+
+		return name;
+	}
+};

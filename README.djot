@@ -18,7 +18,7 @@ see the file comments for usage
 
 ## TODO/TEST
 
-[ ] server util function to disambiguate name
+[x] server util function to disambiguate name
     move it out to improve readability of join handler
     and enable reuse in other places
 
@@ -46,9 +46,11 @@ see the file comments for usage
     provide message type and it can read globals
     automatically convert to string
     return message as string
+[ ] use map for player lists to preserve order
+    at least active player list
 [ ] version server and clients
     // print before anything else
 [ ] state transition to giving word
 [ ] waiting queue for join/reconnect during reading/voting
     use playersPlaying + playersGone + playersWaiting
-[ ] main client: views, verification, and test-client logic 
+[ ] main client: views, verification, and test-client logic
