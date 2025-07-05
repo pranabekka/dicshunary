@@ -50,4 +50,5 @@ see the file comments for usage
     // print before anything else
 [ ] state transition to giving word
 [ ] waiting queue for join/reconnect during reading/voting
+    use playersPlaying + playersGone + playersWaiting
 [ ] main client: views, verification, and test-client logic 

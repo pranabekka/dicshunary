@@ -1,9 +1,9 @@
 'use strict';
 
 // :: { [key: playerId]: {socket, name} }
-const players = {};
+const playersActive = {};
 // :: [playerId]
-const playersDisconnected = [];
+const playersInactive = [];
 // start game in lobby
 const gameState = 'LOBBY';
 
@@ -23,8 +23,8 @@ function wsHandler(req) {
 		console.error('--- SOCKET ERROR ---');
 		console.error(e.message);
 		// find and log which socket had an error
-		for (const playerId in players) {
-			if (players[playerId].socket === socket) {
+		for (const playerId in playersActive) {
+			if (playersActive[playerId].socket === socket) {
 				console.error(playerId);
 			}
 		}
@@ -35,25 +35,25 @@ function wsHandler(req) {
 		let id;
 		let name;
 		// find and log which socket closed
-		for (const playerId in players) {
-			if (players[playerId].socket === socket) {
+		for (const playerId in playersActive) {
+			if (playersActive[playerId].socket === socket) {
 				id = playerId;
-				name = players[playerId].name;
+				name = playersActive[playerId].name;
 				console.log('Disconnected: ' + id);
 				break;
 			}
 		}
 		// move from connected to disconnected list
-		delete players[id];
+		delete playersActive[id];
 		// socket becomes invalid,
 		// and name with suffix might be pointless
-		playersDisconnected.push(id);
-		console.log(JSON.parse(JSON.stringify({players})));
-		console.log(JSON.parse(JSON.stringify({playersDisconnected})));
+		playersInactive.push(id);
+		console.log(JSON.parse(JSON.stringify({playersActive})));
+		console.log(JSON.parse(JSON.stringify({playersInactive})));
 
 		// notify other players of disconnect
-		for (const playerId in players) {
-			players[playerId].socket.send(
+		for (const playerId in playersActive) {
+			playersActive[playerId].socket.send(
 				JSON.stringify({
 					type: 'disconnect',
 					id,
@@ -93,15 +93,15 @@ function wsHandler(req) {
 			// joining as a new player or rejoining after disconnect
 			let joinType;
 
-			/// i want to iterate all players at least once
+			/// i want to iterate all active players at least once
 			/// and check their name doesn't match
 			/// if it does match i change name and do it again
 			/// if it doesn't match i move on
 			let nameCollision = 'maybe';
 			while (nameCollision == 'maybe') {
 				// detect collision
-				for (const playerId in players) {
-					const playerName = players[playerId].name;
+				for (const playerId in playersActive) {
+					const playerName = playersActive[playerId].name;
 					if (name == playerName) {
 						nameCollision = 'true';
 					break;
@@ -122,7 +122,7 @@ function wsHandler(req) {
 			// check if player is reconnecting
 			// else generate new id
 			// and set joinType either way
-			if ( playersDisconnected.includes(message.id) ) {
+			if ( playersInactive.includes(message.id) ) {
 				joinType = 'rejoin';
 				id = message.id;
 			} else {
@@ -133,12 +133,12 @@ function wsHandler(req) {
 
 			// if rejoining, remove from disconn list
 			if (joinType == 'rejoin') {
-				const i = playersDisconnected.indexOf(id);
-				playersDisconnected.splice(i, 1);
+				const i = playersInactive.indexOf(id);
+				playersInactive.splice(i, 1);
 			}
 
 			// add player to active players
-			players[id] = {name, socket};
+			playersActive[id] = {name, socket};
 
 			// acknowledge re/joining player
 			// with disambiguated name,
@@ -149,7 +149,7 @@ function wsHandler(req) {
 					type: 'join-ack',
 					id,
 					name,
-					players,
+					players: playersActive,
 					gameState,
 				})
 			);
@@ -161,7 +161,7 @@ function wsHandler(req) {
 				JSON.stringify(msgJoinAck)
 			);
 
-			// notify other connected players of
+			// notify other active players of
 			// re/joining player
 			const msgJoinRejoin = JSON.parse(
 				JSON.stringify({
@@ -170,17 +170,17 @@ function wsHandler(req) {
 					name,
 				})
 			);
-			for (const playerId in players) {
+			for (const playerId in playersActive) {
 				// player is not self
 				if (playerId !== id) {
-					players[playerId].socket.send(
+					playersActive[playerId].socket.send(
 						JSON.stringify(msgJoinRejoin)
 					)
 				}
 			}
 
-			console.log({players});
-			console.log({playersDisconnected});
+			console.log({playersActive});
+			console.log({playersInactive});
 		}
 	}
 
