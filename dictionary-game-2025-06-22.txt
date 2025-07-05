@@ -107,41 +107,25 @@ save it to player data on join
 to keep it consistent everywhere
 walk through players
 if name matches, add suffix to current
-this means send it back to client
-and client adopts name
-only change suffix of current if
-`name + suffix` collides with existing `name + suffix`
-don't treat suffix as counter, only differentiator
-if the whole name doesn't match
-then there's no collision
-and no reason to do anything
-users can also type "<name> (z)"
-and it wouldn't matter
-having tried it out, it looks a bit odd
-and even _random_ numbers look a bit odd
-i think people expect incrementing numbers
-which i could do a simple check for
-but first see what the response is
+and update connected client session
+but not across connections
 
-i currently remove name when player disconnects
-new player shouldn't collide with their invisible name
+clients currently don't see disconnected players
+so we delete their names to avoid invisible name collisions
 but we could show disconnected clients to players
-actually, in the scenarios i have in mind
-there's not a lot of people connecting and disconnecting
-though someone connecting from a different client
-might have a problem with their previous client
-i don't quite expect that
-and i can address it when i need to
-the bigger problem in that case would be deleted scores
-but if i don't delete name, i could maybe use that
-at that scale uuid isn't that important
-in fact, because i disambiguate names and save them
-i don't need uuid
-though i don't save disambiguated names across client sessions
-which is an easy fix, if awkward for the user
+might even want to show their scores
 
-don't save server sent name changes to localStorage
-only apply it to running client
+wait to see if name stealing becomes an issue
+before i start saving names for disconnected players
+in cases where they might be temporarily disconnected
+and someone could join/rejoin with same name
+and then their name changes suddenly
+
+if players want to switch devices and preserve scores
+do player tracking with name and server gen password
+pick four letter password from dictionary
+request password only if using existing name
+log out previous device if successful
 
 allow renames only in lobby
 without waiting for approval or anything
@@ -289,6 +273,7 @@ and close doesn't manage state, only deleting sockets
 so switch on message events in onmessage
 and update state on certain messages
 alright this is workable
+
 
 # lobby -> giving
 

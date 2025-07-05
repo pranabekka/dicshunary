@@ -18,9 +18,8 @@ see the file comments for usage
 
 ## TODO/TEST
 
-[x] server util function to disambiguate name
-    move it out to improve readability of join handler
-    and enable reuse in other places
+[ ] separate logic for joinType and id generation
+    idgen depends on joinType
 
 ## done
 
@@ -31,6 +30,7 @@ see the file comments for usage
 [x] disconnect (changeID: mktwznzx)
 [x] server: refactor disconnects (changeID: klslsywr)
 [x] reconnect (changeID: lsnuwnpn)
+[x] server util function to disambiguate name (changeID: rumuttmm)
 
 ### later
 
