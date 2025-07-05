@@ -52,28 +52,14 @@ function wsHandler(req) {
 		console.log(JSON.parse(JSON.stringify({playersDisconnected})));
 
 		// notify other players of disconnect
-		const msgDisconn = JSON.parse(
-			JSON.stringify({
-				type: 'disconnect',
-				id,
-				name,
-			})
-		);
 		for (const playerId in players) {
-			if (playerId !== id) {
-				if (players[playerId].socket !== undefined) {
-					players[playerId].socket.send(
-						JSON.stringify(msgDisconn)
-					);
-				} else {
-					console.error(
-						`%cERROR: %cPlayer not connected: ${playerId}.`
-						+ ' SKIPPING disconnect notification',
-						'color: red; font-weight: bold',
-						''
-					);
-				}
-			}
+			players[playerId].socket.send(
+				JSON.stringify({
+					type: 'disconnect',
+					id,
+					name,
+				})
+			);
 		}
 	}
 

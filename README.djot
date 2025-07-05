@@ -18,16 +18,9 @@ see the file comments for usage
 
 ## TODO/TEST
 
-[x] reconnect
-	[x] server
-		[x] move id from disconn list to
-		    players list with name and socket
-		[x] send rejoin message to clients
-	[x] client
-		[x] add reconn message info to players
-		[x] set id to server sent id in join-ack
-		    server figures out if id is for old game
-		    and generates new id
+[ ] server util function to disambiguate name
+    move it out to improve readability of join handler
+    and enable reuse in other places
 
 ## done
 
@@ -37,6 +30,7 @@ see the file comments for usage
 [x] resolve name collision with suffix (changeID: klqyusnu)
 [x] disconnect (changeID: mktwznzx)
 [x] server: refactor disconnects (changeID: klslsywr)
+[x] reconnect (changeID: lsnuwnpn)
 
 ### later
 
@@ -45,14 +39,15 @@ see the file comments for usage
     in messages to client, do id:name pairs
     in logs, concat socket info
 	`eachPair(obj, func)` returns a new obj
-[ ] server util function to disambiguate name
-    move it out to improve readability of join handler
-    and enable reuse in other places
 [ ] server util function to copy object
     JSON.parse(JSON.stringify(obj)) is enough
     but makes everything verbose when used directly
+[ ] server util function to construct messages
+    provide message type and it can read globals
+    automatically convert to string
+    return message as string
 [ ] version server and clients
-	// print before anything else
+    // print before anything else
 [ ] state transition to giving word
 [ ] waiting queue for join/reconnect during reading/voting
 [ ] main client: views, verification, and test-client logic 

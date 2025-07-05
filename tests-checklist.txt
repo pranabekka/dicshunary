@@ -9,6 +9,25 @@ and work out incorrect state or other hidden cause
 from actual observable behaviour
 as long as i test things.
 
+[ ] reconnect
+	[ ] server: handle disconnect and _re_connect
+		[ ] STEP run server
+		[ ] STEP run test client
+		[ ] STEP close client
+		[ ] EXPECT server prints empty player list
+		    and disconnected list with client id
+		[ ] STEP run client with server provided id
+		[ ] EXPECT server prints player list with client id
+		    and empty disconnected list
+	[ ] client: show rejoining player
+		[ ] STEP run server
+		[ ] STEP run test client one
+		[ ] STEP run test client two
+		[ ] STEP close client one
+		[ ] EXPECT client two shows no players
+		[ ] STEP run test client one with server given id
+		[ ] EXPECT client two receives rejoin message
+		    and shows same player as before
 [ ] disconnect
 	[ ] remove player from clients on disconnect
 		[ ] STEP run server
