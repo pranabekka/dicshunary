@@ -89,29 +89,21 @@ function wsHandler(req) {
 
 		function lobbyJoinHandler(message) {
 			const name = util.nameDisambiguate(message.name);
-			let id;
-			// joining as a new player or rejoining after disconnect
-			let joinType;
+			const joinType = playersInactive.includes(message.id)
+				? 'rejoin'
+				: 'new-player';
+			const id = joinType === 'rejoin'
+				? message.id
+				: 'player-' + crypto.randomUUID();
+			console.log({name, joinType, id})
 
-			// check if player is reconnecting
-			// else generate new id
-			// and set joinType either way
-			if ( playersInactive.includes(message.id) ) {
-				joinType = 'rejoin';
-				id = message.id;
-			} else {
-				id = 'player-' + crypto.randomUUID();
-				joinType = 'new-player';
-			}
-			console.log({joinType});
-
-			// if rejoining, remove from disconn list
+			// remove from disconn list if rejoin
 			if (joinType == 'rejoin') {
 				const i = playersInactive.indexOf(id);
 				playersInactive.splice(i, 1);
 			}
 
-			// add player to active players
+			// add player to active players, rejoin or no
 			playersActive[id] = {name, socket};
 
 			// acknowledge re/joining player

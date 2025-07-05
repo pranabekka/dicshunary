@@ -18,7 +18,7 @@ see the file comments for usage
 
 ## TODO/TEST
 
-[ ] separate logic for joinType and id generation
+[x] separate logic for joinType and id generation
     idgen depends on joinType
 
 ## done
