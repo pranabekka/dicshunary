@@ -18,8 +18,9 @@ see the file comments for usage
 
 ## TODO/TEST
 
-[x] separate logic for joinType and id generation
-    idgen depends on joinType
+[x] server util function to copy objects as JSON data
+    JSON.parse(JSON.stringify(obj)) is enough
+    but makes everything verbose when used directly
 
 ## done
 
@@ -31,6 +32,7 @@ see the file comments for usage
 [x] server: refactor disconnects (changeID: klslsywr)
 [x] reconnect (changeID: lsnuwnpn)
 [x] server util function to disambiguate name (changeID: rumuttmm)
+[x] cleanup logic for joinType and id generation (changeID: wuwnwsvm)
 
 ### later
 
@@ -39,9 +41,6 @@ see the file comments for usage
     in messages to client, do id:name pairs
     in logs, concat socket info
 	`eachPair(obj, func)` returns a new obj
-[ ] server util function to copy object
-    JSON.parse(JSON.stringify(obj)) is enough
-    but makes everything verbose when used directly
 [ ] server util function to construct messages
     provide message type and it can read globals
     automatically convert to string

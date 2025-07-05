@@ -48,8 +48,8 @@ function wsHandler(req) {
 		// socket becomes invalid,
 		// and name with suffix might be pointless
 		playersInactive.push(id);
-		console.log(JSON.parse(JSON.stringify({playersActive})));
-		console.log(JSON.parse(JSON.stringify({playersInactive})));
+		console.log({playersActive});
+		console.log({playersInactive});
 
 		// notify other players of disconnect
 		for (const playerId in playersActive) {
@@ -110,15 +110,13 @@ function wsHandler(req) {
 			// with disambiguated name,
 			// new/existing id,
 			// and game info
-			const msgJoinAck = JSON.parse(
-				JSON.stringify({
-					type: 'join-ack',
-					id,
-					name,
-					players: playersActive,
-					gameState,
-				})
-			);
+			const msgJoinAck = util.objCopy({
+				type: 'join-ack',
+				id,
+				name,
+				players: playersActive,
+				gameState,
+			});
 			delete msgJoinAck.players[id];
 			for (const playerId in msgJoinAck.players) {
 				delete msgJoinAck.players[playerId].socket;
@@ -129,13 +127,11 @@ function wsHandler(req) {
 
 			// notify other active players of
 			// re/joining player
-			const msgJoinRejoin = JSON.parse(
-				JSON.stringify({
-					type: joinType,
-					id,
-					name,
-				})
-			);
+			const msgJoinRejoin = util.objCopy({
+				type: joinType,
+				id,
+				name,
+			});
 			for (const playerId in playersActive) {
 				// player is not self
 				if (playerId !== id) {
@@ -190,5 +186,11 @@ const util = {
 		}
 
 		return name;
+	},
+
+	objCopy(obj) {
+		return JSON.parse(
+			JSON.stringify(obj)
+		);
 	}
 };
