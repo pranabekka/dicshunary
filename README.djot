@@ -18,9 +18,12 @@ see the file comments for usage
 
 ## TODO/TEST
 
-[x] server util function to copy objects as JSON data
-    JSON.parse(JSON.stringify(obj)) is enough
-    but makes everything verbose when used directly
+[x] server util function to construct messages
+    provide message type and relevant local data,
+    then it can read globals
+    and return message as string
+	[x] construct join-ack
+	[x] construct join/rejoin
 
 ## done
 
@@ -33,23 +36,36 @@ see the file comments for usage
 [x] reconnect (changeID: lsnuwnpn)
 [x] server util function to disambiguate name (changeID: rumuttmm)
 [x] cleanup logic for joinType and id generation (changeID: wuwnwsvm)
+[x] server util function to copy objects as JSON data (changeID: oqxqnzmq)
 
 ### later
 
+[ ] remove socket info when logging server state
+    JSON stringify+parse with objCopy might truncate it
+    and will be required anyway if that doesn't work
+    just put a comment explaining why i'm doing it
+[ ] put global data in a single dict var titled `global`
+    or using a naming convention like GLOBAL_VAR
+    though that's also used for constants.
+    if i used a global object, i could restrict mutation
+    to explicit function calls instead of worrying
+    about accidental mutation
 [ ] server util function for mapping over players
     and returning new result instead of modifying input
     in messages to client, do id:name pairs
     in logs, concat socket info
 	`eachPair(obj, func)` returns a new obj
-[ ] server util function to construct messages
-    provide message type and it can read globals
-    automatically convert to string
-    return message as string
 [ ] use map for player lists to preserve order
     at least active player list
+    or maybe use a list, since the splice api
+    makes it much easier to reorder
+    maybe list only for tracking order, not info
 [ ] version server and clients
     // print before anything else
 [ ] state transition to giving word
 [ ] waiting queue for join/reconnect during reading/voting
     use playersPlaying + playersGone + playersWaiting
+[ ] util function to send messages with filter
+    for things like id, active status, etc.
+    `msgSendAllBut(exceptions)` or something
 [ ] main client: views, verification, and test-client logic

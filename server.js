@@ -110,34 +110,21 @@ function wsHandler(req) {
 			// with disambiguated name,
 			// new/existing id,
 			// and game info
-			const msgJoinAck = util.objCopy({
-				type: 'join-ack',
-				id,
-				name,
-				players: playersActive,
-				gameState,
-			});
-			delete msgJoinAck.players[id];
-			for (const playerId in msgJoinAck.players) {
-				delete msgJoinAck.players[playerId].socket;
-			}
 			socket.send(
-				JSON.stringify(msgJoinAck)
+				util.msgMake('join-ack', { id, name })
 			);
 
 			// notify other active players of
 			// re/joining player
-			const msgJoinRejoin = util.objCopy({
-				type: joinType,
-				id,
-				name,
-			});
-			for (const playerId in playersActive) {
-				// player is not self
-				if (playerId !== id) {
-					playersActive[playerId].socket.send(
-						JSON.stringify(msgJoinRejoin)
-					)
+			{
+				const msgJoinRejoin = util.msgMake(
+					'join/rejoin', { joinType, id, name }
+				);
+				for (const playerId in playersActive) {
+					// player is not self
+					if (playerId !== id) {
+						playersActive[playerId].socket.send( msgJoinRejoin );
+					}
 				}
 			}
 
@@ -192,5 +179,53 @@ const util = {
 		return JSON.parse(
 			JSON.stringify(obj)
 		);
+	},
+
+	// always put data as object
+	// so that i get keys to work with.
+	// always return json as string
+	msgMake(type, data) {
+		switch (type) {
+			case 'join-ack':
+				const msgJoinAck = util.objCopy({
+					type: 'join-ack',
+					id: data.id,
+					name: data.name,
+					players: playersActive,
+					gameState,
+				});
+
+				// player's own info is going directly in message
+				delete msgJoinAck.players[data.id];
+
+				// json doesn't serialise socketinfo
+				// but it's cleaner to remove it
+				// than deal with extra fields on client
+				for (const playerId in msgJoinAck.players) {
+					delete msgJoinAck.players[playerId].socket;
+				}
+
+				return JSON.stringify(msgJoinAck);
+				break;
+
+			case 'join/rejoin':
+				const msgJoinRejoin = {
+					type: data.joinType,
+					id: data.id,
+					name: data.name,
+				}
+
+				return JSON.stringify(msgJoinRejoin);
+				break;
+
+			default:
+				console.error(
+					`%cERROR:%c Unknown message type: {type}`,
+					'color: red; font-weight: bold',
+					''
+				);
+				console.error({data});
+				Deno.exit();
+		}
 	}
 };
