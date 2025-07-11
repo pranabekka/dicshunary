@@ -18,25 +18,12 @@ see the file comments for usage
 
 ## TODO/TEST
 
-[x] server util function to construct messages
-    provide message type and relevant local data,
-    then it can read globals
-    and return message as string
-	[x] construct join-ack
-	[x] construct join/rejoin
-
-## done
-
-[x] store and use name and id (changeID: lowtsxty)
-[x] make id optional for joining (changeID: krsotrks)
-[x] simple state machine to manage game state (changeID: nmyuymyn)
-[x] resolve name collision with suffix (changeID: klqyusnu)
-[x] disconnect (changeID: mktwznzx)
-[x] server: refactor disconnects (changeID: klslsywr)
-[x] reconnect (changeID: lsnuwnpn)
-[x] server util function to disambiguate name (changeID: rumuttmm)
-[x] cleanup logic for joinType and id generation (changeID: wuwnwsvm)
-[x] server util function to copy objects as JSON data (changeID: oqxqnzmq)
+[ ] put global data in a single dict var titled `global`
+    or using a naming convention like GLOBAL_VAR
+    though that's also used for constants.
+    if i used a global object, i could restrict mutation
+    to explicit function calls instead of worrying
+    about accidental mutation
 
 ### later
 
@@ -44,12 +31,6 @@ see the file comments for usage
     JSON stringify+parse with objCopy might truncate it
     and will be required anyway if that doesn't work
     just put a comment explaining why i'm doing it
-[ ] put global data in a single dict var titled `global`
-    or using a naming convention like GLOBAL_VAR
-    though that's also used for constants.
-    if i used a global object, i could restrict mutation
-    to explicit function calls instead of worrying
-    about accidental mutation
 [ ] server util function for mapping over players
     and returning new result instead of modifying input
     in messages to client, do id:name pairs
