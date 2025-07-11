@@ -24,6 +24,10 @@ see the file comments for usage
     if i used a global object, i could restrict mutation
     to explicit function calls instead of worrying
     about accidental mutation
+    ah, there's a convention of _name
+    to not directly access such a field
+    another option is overwriting get/set or the prototype,
+    but staying clear of _name might easier and good enough
 
 ### later
 
