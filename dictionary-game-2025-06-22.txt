@@ -329,3 +329,18 @@ test-client is only for dev use
 the other option would be Deno.stdin.close() or .read()
 try that if i have complications
 maybe it'll even be simpler
+
+
+## testing
+
+spawning a server process and waiting for results
+has caused a lot of roadblocks
+the better path is to use plain old functions
+and hook up input/output later, like sockets and all
+
+to test sockets, i'll need to use subprocess
+to spawn server at test begin and kill at test end
+and i'll need to figure out how to wait for it
+the solution might be creating a timeout and waiting
+with an advanced solution of also killing it
+if i get the result before it finishes

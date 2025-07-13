@@ -8,21 +8,17 @@ see `dictionary-game-2025-06-22.txt`
 
 `server.js` is a deno server script
 
+`server_test.js` is deno test script that creates
+multiple client connections to the server
+
 `client.html` is sent by the server to clients.
 it's a single file with script and style tags.
 relies on being served to get server url and connect
-
-`test-client.js` is a console client deno script
-for connecting to the server and testing it.
-see the file comments for usage
 
 ## TASKS
 
 ### DOING
 
-[ ] figure out automatic testing
-    a test script to open multiple sockets conns to server
-    and inspect values
 
 ### TO DO
 
