@@ -46,7 +46,18 @@ Deno.test('store players', () => {
 	);
 });
 
-// Deno.test('TEMPLATE', () => {
+Deno.test('autofix name collision', () => {
+	const game = new Game();
+	const name = 'Colliding';
+	const { name: name1 } = game.join(name);
+	const { name: name2 } = game.join(name);
+	assert(
+		name1 != name2,
+		`names should not be same. got "${name1}" and "${name2}"`
+	);
+});
+
+// Deno.test('+TEMPLATE+', () => {
 // 	exampleFunc();
 // });
 
