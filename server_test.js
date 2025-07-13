@@ -1,24 +1,24 @@
-//// Test the server by opening websocket connections
-//// then sending messages to check the server's response.
-
 'use strict';
 
-import * as server from './server.js';
+import { Game } from './server.js';
 import { assert } from 'jsr:@std/assert';
 
 Deno.test('get join acknowledgement', () => {
-	const { type } = server.join('Player');
+	const game = new Game();
+	const { type } = game.join('Player');
 	assert(type === 'join-ack', 'should receive object with type "join-ack".');
 });
 
 Deno.test('confirm name on join', () => {
+	const game = new Game();
 	const name = 'Player';
-	const { name: messageName } = server.join('Player');
-	assert(messageName === name, 'should return same name');
+	const { name: messageName } = game.join('Player');
+	assert(messageName === name, `should return same name - "${name}". got "${messageName}"`);
 });
 
 Deno.test('assign id on join', () => {
-	const { id: messageId } = server.join('IWannaID');
+	const game = new Game();
+	const { id: messageId } = game.join('IWannID');
 	assert(
 		typeof messageId === 'string',
 		`id should be "string". got "${typeof messageId}"`
@@ -38,9 +38,10 @@ Deno.test('assign id on join', () => {
 });
 
 Deno.test('store players', () => {
-	const { id } = server.join('SaveMe');
+	const game = new Game();
+	const { id } = game.join('SaveMe');
 	assert(
-		Object.keys(server.players).includes(id),
+		Object.keys(game.players).includes(id),
 		`players object should have entry with id`
 	);
 });

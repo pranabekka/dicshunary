@@ -99,6 +99,9 @@ trust in the server
 
 ##  name
 
+clients must ensure name is not blank
+before submitting to server
+
 suffix random letters if same name
 players should be able to play
 without having to fix name error
