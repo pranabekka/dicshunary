@@ -16,8 +16,17 @@ relies on being served to get server url and connect
 for connecting to the server and testing it.
 see the file comments for usage
 
-## TODO/TEST
+## TASKS
 
+### DOING
+
+[ ] figure out automatic testing
+    a test script to open multiple sockets conns to server
+    and inspect values
+
+### TO DO
+
+[ ] game management vs player management split
 [ ] put global data in a single dict var titled `global`
     or using a naming convention like GLOBAL_VAR
     though that's also used for constants.
@@ -27,10 +36,7 @@ see the file comments for usage
     ah, there's a convention of _name
     to not directly access such a field
     another option is overwriting get/set or the prototype,
-    but staying clear of _name might easier and good enough
-
-### later
-
+    but staying clear of _name is easier and might be good enough
 [ ] remove socket info when logging server state
     JSON stringify+parse with objCopy might truncate it
     and will be required anyway if that doesn't work
