@@ -1,13 +1,20 @@
 'use strict';
 
 export class Game {
-	players = {};
+	// playersActive :: { [id]: name }
+	playersActive = {};
+	playersDisconnected = [];
 
-	join(name, id) {
+	playerAdd(name, id) {
 		id = 'player-' + crypto.randomUUID();
 		name = this.newNameParse(name);
-		this.players[id] = name;
+		this.playersActive[id] = name;
 		return { type: 'join-ack', name, id };
+	}
+
+	playerRemove(id) {
+		delete this.playersActive[id];
+		this.playersDisconnected.push(id);
 	}
 
 	// creates valid name
@@ -18,8 +25,8 @@ export class Game {
 
 		while (collisionState === 'maybe') {
 			// detect collisions
-			for (const player in this.players) {
-				const name = this.players[player];
+			for (const player in this.playersActive) {
+				const name = this.playersActive[player];
 				if (newName === name) {
 					collisionState = 'true';
 					break;
