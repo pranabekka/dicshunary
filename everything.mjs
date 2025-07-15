@@ -28,10 +28,14 @@ class Game {
 	}
 
 	nextStage() {
-		const idx = this._stages.indexOf(this._stage);
-		const next = idx === this._stages.length - 1 ?
-			0 : idx + 1;
-		this._stage = this._stages[next];
+		if (this._players.size < 3) {
+			return;
+		} else {
+			const idx = this._stages.indexOf(this._stage);
+			const next = idx === this._stages.length - 1 ?
+				0 : idx + 1;
+			this._stage = this._stages[next];
+		}
 	}
 }
 
@@ -83,19 +87,13 @@ Deno.test('update player status on rejoin', () => {
 	);
 });
 
-Deno.test('go from last game stage back to first', () => {
+Deno.test('enforce minimum player count for switching stage', () => {
 	const game = new Game();
-	const firstStage = game._stages[0];
-	const lastStage = game._stages[game._stages.length - 1];
-	game._stage = lastStage;
-	assert(
-		game._stage === 'scoring',
-		`game stage should be "${lastStage}". got "${game._stage}"`
-	);
+	const stage = game._stage;
 	game.nextStage();
 	assert(
-		game._stage === 'giving',
-		`game stage should be "${firstStage}". got "${game._stage}"`
+		game._stage === stage,
+		`game stage should be "${stage}" with less than three players. got "${game._stage}"`
 	);
 });
 
