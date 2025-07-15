@@ -4,18 +4,20 @@ export class Game {
 	// playersActive :: { [id]: name }
 	playersActive = {};
 	playersDisconnected = {};
+	// scoresByRound :: [ { [id]: score } ]
+	scoresByRound = [];
 
 	playerAdd(name, id) {
 		id = 'player-' + crypto.randomUUID();
 		name = this.newNameParse(name);
-		this.playersActive[id] = name;
+		this.playersActive[id] = { name, score: 0 };
 		return { type: 'join-ack', name, id };
 	}
 
 	playerRemove(id) {
-		const name = this.playersActive[id];
+		const info = this.playersActive[id];
 		delete this.playersActive[id];
-		this.playersDisconnected[id] = name;
+		this.playersDisconnected[id] = info;
 	}
 
 	// creates valid name
@@ -27,7 +29,7 @@ export class Game {
 		while (collisionState === 'maybe') {
 			// detect collisions with active players
 			for (const player in this.playersActive) {
-				const name = this.playersActive[player];
+				const name = this.playersActive[player].name;
 				if (newName === name) {
 					collisionState = 'true';
 					break;
@@ -35,7 +37,7 @@ export class Game {
 			}
 			// detect collisions with disconnected players
 			for (const player in this.playersDisconnected) {
-				const name = this.playersDisconnected[player];
+				const name = this.playersDisconnected[player].name;
 				if (newName === name) {
 					collisionState = 'true';
 					break;
