@@ -152,6 +152,28 @@ Deno.test('order active players by re/joining', () => {
 	);
 });
 
+Deno.test('check minimum player count before switching stage', () => {
+	const game = new Game();
+	game.playerAdd('Player');
+	assert(
+		game._minPlayerCount === 3,
+		'minimum player count should be defined as 3'
+	);
+	game.nextStage();
+	assert(
+		game.currentStage === 'lobby',
+		`game should stay in lobby with only 1 player. got "${game.currentStage}"`
+	);
+	game.playerAdd('Player1');
+	game.playerAdd('Player2');
+	game.playerAdd('Player3');
+	game.nextStage();
+	assert(
+		game.currentStage === 'giving',
+		`game should progress to "giving" with 3 players. got "${game.currentStage}"`
+	);
+});
+
 // Deno.test('+TEMPLATE+', () => {
 // 	exampleFunc();
 // });

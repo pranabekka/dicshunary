@@ -2,19 +2,20 @@
 
 dictionary is a word game
 multiple rounds
-one word giver, rest guessers
-giver changes every round
-round starts with giver giving an unknown word
-everyone secretly writes a definition and submits to giver
-the giver's must be correct, and guessers' should be convincing
-at end giver reads all definitions
-and guessers vote for which they think is true
-giver only registers votes
-giver gets points for each player who guesses incorrect definition
-guessers get points for each player picking their incorrect definition
-the giver reveals who wrote which guess
-round ends
-and new starts with next player as giver
+each round has multiple stages
+1. a player is selected as giver
+   and gives a word nobody else knows
+2. everybody secretly writes down a definition
+   the giver writes the correct definition,
+   and the rest write a guess
+3. the giver reads all the definitions in random order
+   without giving any names to the guessers
+4. the guessers vote for their favourite definition
+5. the giver reveals who wrote which definition
+   and the players receive scores.
+   guessers get a point for each vote for their definition.
+   the giver gets a point for incorrect votes
+the next round begins with a different word giver
 
 
 ##  data, code names

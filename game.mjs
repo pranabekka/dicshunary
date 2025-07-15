@@ -6,6 +6,10 @@ export class Game {
 	playersDisconnected = {};
 	// scoresByRound :: [ { [id]: score } ]
 	scoresByRound = [];
+	stages = ['lobby', 'giving', 'guessing', 'reading', 'voting', 'scoring'];
+	currentStage = this.stages[0];
+	// must have at least 1 giver and 2 guessers
+	_minPlayerCount = 3;
 
 	playerAdd(name, id) {
 		if (this.playersDisconnected[id] !== undefined) {
@@ -26,6 +30,16 @@ export class Game {
 		const info = this.playersActive[id];
 		delete this.playersActive[id];
 		this.playersDisconnected[id] = info;
+	}
+
+	nextStage() {
+		const activeCount = Object.keys(this.playersActive).length;
+		if (activeCount >= this._minPlayerCount) {
+			const currentIdx = this.stages.indexOf(this.currentStage);
+			const nextIdx = currentIdx === this.stages.length - 1 ?
+				0 : currentIdx + 1;
+			this.currentStage = this.stages[nextIdx];
+		}
 	}
 
 	// creates valid name
