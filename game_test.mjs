@@ -59,7 +59,8 @@ Deno.test('autofix name collision', () => {
 
 Deno.test('disconnect players and save', () => {
 	const game = new Game();
-	const { id } = game.playerAdd('ImmaLeave');
+	const name = 'ImmaLeave';
+	const { id } = game.playerAdd(name);
 	assert(
 		Object.keys(game.playersActive).includes(id),
 		`there should be an active player with provided id`
@@ -70,8 +71,25 @@ Deno.test('disconnect players and save', () => {
 		`there should be no active players`
 	);
 	assert(
-		game.playersDisconnected.includes(id),
-		`there should be a disconnected player`
+		Object.keys(game.playersDisconnected).length === 1,
+		`there should be one disconnected player`
+	);
+	const savedName = game.playersDisconnected[id];
+	assert(
+		name === savedName,
+		`disconnected name should match "${name}". got "${savedName}"`
+	);
+});
+
+Deno.test('autofix name collision with disconnected players', () => {
+	const game = new Game();
+	const name = 'Leave n Collide'
+	const player1 = game.playerAdd(name);
+	game.playerRemove(player1.id);
+	const player2 = game.playerAdd(name);
+	assert(
+		player2.name !== player1.name,
+		`active player names should not match disconnected.`
 	);
 });
 

@@ -113,22 +113,8 @@ if name matches, add suffix to current
 and update connected client session
 but not across connections
 
-clients currently don't see disconnected players
-so we delete their names to avoid invisible name collisions
-but we could show disconnected clients to players
-might even want to show their scores
-
-wait to see if name stealing becomes an issue
-before i start saving names for disconnected players
-in cases where they might be temporarily disconnected
-and someone could join/rejoin with same name
-and then their name changes suddenly
-
-if players want to switch devices and preserve scores
-do player tracking with name and server gen password
-pick four letter password from dictionary
-request password only if using existing name
-log out previous device if successful
+save names for disconnected players
+to show in score sheet
 
 allow renames only in lobby
 without waiting for approval or anything
@@ -136,6 +122,12 @@ just an edit name button
 that creates a component then waits for submit
 to delete component and send rename message
 pretty straightforward this
+
+if players want to switch devices and preserve scores
+do player tracking with name and server gen password
+pick four letter password from dictionary
+request password only if using existing name
+log out previous device if successful
 
 
 ##  localStorage

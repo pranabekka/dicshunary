@@ -3,7 +3,7 @@
 export class Game {
 	// playersActive :: { [id]: name }
 	playersActive = {};
-	playersDisconnected = [];
+	playersDisconnected = {};
 
 	playerAdd(name, id) {
 		id = 'player-' + crypto.randomUUID();
@@ -13,8 +13,9 @@ export class Game {
 	}
 
 	playerRemove(id) {
+		const name = this.playersActive[id];
 		delete this.playersActive[id];
-		this.playersDisconnected.push(id);
+		this.playersDisconnected[id] = name;
 	}
 
 	// creates valid name
@@ -24,9 +25,17 @@ export class Game {
 		let collisionState = 'maybe';
 
 		while (collisionState === 'maybe') {
-			// detect collisions
+			// detect collisions with active players
 			for (const player in this.playersActive) {
 				const name = this.playersActive[player];
+				if (newName === name) {
+					collisionState = 'true';
+					break;
+				}
+			}
+			// detect collisions with disconnected players
+			for (const player in this.playersDisconnected) {
+				const name = this.playersDisconnected[player];
 				if (newName === name) {
 					collisionState = 'true';
 					break;
