@@ -7,10 +7,7 @@ class Game {
 	_players = new Map();
 	// rounds :: List<Map<player, {definition, List<voter>}>>
 	_rounds = [];
-	_stages = [
-		'waiting', 'giving', 'guessing',
-		'voting', 'scoring'
-	];
+	_stages = [ 'giving', 'guessing', 'voting', 'scoring' ];
 	_stage = this._stages[0];
 
 	// also adds player as new joinee
@@ -97,7 +94,7 @@ Deno.test('go from last game stage back to first', () => {
 	);
 	game.nextStage();
 	assert(
-		game._stage === 'waiting',
+		game._stage === 'giving',
 		`game stage should be "${firstStage}". got "${game._stage}"`
 	);
 });
