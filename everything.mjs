@@ -3,34 +3,60 @@
 import { assert } from 'jsr:@std/assert';
 
 class Game {
-	// players :: Map<id, [score, status]>
-	players = new Map();
-	// rounds :: List<Map<player, [definition, List<voter>]>>
-	rounds = new Array();
+	// players :: Map<id, {score: number, status: (active | departed)}>
+	_players = new Map();
+	// rounds :: List<Map<player, {definition, List<voter>}>>
+	_rounds = new Array();
 
-	playerJoin() {
-		const player = new Player();
-		this.players.set(player.id, [0, 'active']);
-		return new Player();
+	playerNew() {
+		const player = new Player(this);
+		this._players.set(player.id, { score: 0, status: 'active' });
+		return player;
+	}
+
+	playerLeave(id) {
+		const player = this._players.get(id);
+		this._players.set(id, { score: player.score, status: 'departed' });
 	}
 }
 
 class Player {
-	constructor() {
+	constructor(game) {
+		this.game = game;
 		this.id = 'player-' + crypto.randomUUID();
 	}
+
 	leave() {
-		console.log('bye-bye!');
+		this.game.playerLeave(this.id);
 	}
+
 	rejoin() {
 		console.log('hi again!');
 	}
 }
 
-Deno.test('(EXAMPLE) create player', () => {
-	const player = new Game().playerJoin();
+Deno.test('update player status on join', () => {
+	const game = new Game();
+	const player = game.playerNew();
+	let playerStatus = game._players.get(player.id).status;
 	assert(
-		player instanceof Player,
-		'should get a Player instance'
+		playerStatus === 'active',
+		`player status should be "active". got "${playerStatus}"`
 	);
 });
+
+Deno.test('update player status on leave', () => {
+	const game = new Game();
+	const player = game.playerNew();
+	player.leave();
+	let playerStatus = game._players.get(player.id).status;
+	assert(
+		playerStatus === 'departed',
+		`player status should be "departed". got "${playerStatus}"`
+	);
+});
+
+// Deno.test('-TEMPLATE-', () => {
+// 	const game = new Game();
+// 	const player = game.playerNew();
+// });
