@@ -67,7 +67,7 @@ Deno.test('disconnect players and save', () => {
 	);
 	game.playerRemove(id);
 	assert(
-		!Object.keys(game.playersActive).includes(id),
+		Object.keys(game.playersActive).length === 0,
 		`there should be no active players`
 	);
 	assert(
