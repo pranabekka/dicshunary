@@ -13,12 +13,12 @@ export class Game {
 			const { score } = this.playersDisconnected[id];
 			delete this.playersDisconnected[id];
 			this.playersActive[id] = { name, score };
-			return { type: 'join-ack', name, id };
+			return { name, id };
 		} else {
 			id = 'player-' + crypto.randomUUID();
 			name = this.newNameParse(name);
 			this.playersActive[id] = { name, score: 0 };
-			return { type: 'join-ack', name, id };
+			return { name, id };
 		}
 	}
 

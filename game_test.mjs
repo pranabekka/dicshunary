@@ -3,17 +3,23 @@
 import { Game } from './game.mjs';
 import { assert } from 'jsr:@std/assert';
 
-Deno.test('get join acknowledgement', () => {
+Deno.test('get join details', () => {
 	const game = new Game();
-	const { type } = game.playerAdd('Player');
-	assert(type === 'join-ack', 'should receive object with type "join-ack".');
+	const player = game.playerAdd('Player');
+	assert(
+		player !== undefined,
+		'should receive object with type "join-ack".'
+	);
 });
 
 Deno.test('confirm name on join', () => {
 	const game = new Game();
 	const name = 'Player';
 	const { name: messageName } = game.playerAdd('Player');
-	assert(messageName === name, `should return same name - "${name}". got "${messageName}"`);
+	assert(
+		messageName === name,
+		`should return same name - "${name}". got "${messageName}"`
+	);
 });
 
 Deno.test('assign id on join', () => {
