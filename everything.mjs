@@ -6,7 +6,12 @@ class Game {
 	// players :: Map<id, {score: number, status: (active | departed)}>
 	_players = new Map();
 	// rounds :: List<Map<player, {definition, List<voter>}>>
-	_rounds = new Array();
+	_rounds = [];
+	_stages = [
+		'waiting', 'giving', 'guessing',
+		'voting', 'scoring'
+	];
+	_stage = this._stages[0];
 
 	// also adds player as new joinee
 	playerNew() {
@@ -23,6 +28,13 @@ class Game {
 	playerRejoin(id) {
 		const player = this._players.get(id);
 		this._players.set(id, { score: player.score, status: 'active' });
+	}
+
+	nextStage() {
+		const idx = this._stages.indexOf(this._stage);
+		const next = idx === this._stages.length - 1 ?
+			0 : idx + 1;
+		this._stage = this._stages[next];
 	}
 }
 
@@ -74,7 +86,26 @@ Deno.test('update player status on rejoin', () => {
 	);
 });
 
+Deno.test('go from last game stage back to first', () => {
+	const game = new Game();
+	const firstStage = game._stages[0];
+	const lastStage = game._stages[game._stages.length - 1];
+	game._stage = lastStage;
+	assert(
+		game._stage === 'scoring',
+		`game stage should be "${lastStage}". got "${game._stage}"`
+	);
+	game.nextStage();
+	assert(
+		game._stage === 'waiting',
+		`game stage should be "${firstStage}". got "${game._stage}"`
+	);
+});
+
 // Deno.test('-TEMPLATE-', () => {
 // 	const game = new Game();
 // 	const player = game.playerNew();
+// 	assert(
+// 		-ASSERTION-,
+// 		`-MESSAGE-`
 // });
