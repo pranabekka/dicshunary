@@ -3,7 +3,7 @@
 import { assert } from 'jsr:@std/assert';
 
 class Game {
-	// players :: Map<id, {score: number, status: (active | departed)}>
+	// players :: Map<id, {score: number, status: (active | inactive)}>
 	_players = new Map();
 	// rounds :: List<Map<player, {definition, List<voter>}>>
 	_rounds = [];
@@ -23,12 +23,24 @@ class Game {
 
 	playerLeave(id) {
 		const player = this._players.get(id);
-		this._players.set(id, { score: player.score, status: 'departed' });
+		this._players.set(id, { score: player.score, status: 'inactive' });
+		if (this._giver === id) {
+			this._giver = null;
+			for (const [player, details] of this._players) {
+				if (details.status === 'active') {
+					this._giver = player;
+					break;
+				}
+			}
+		}
 	}
 
 	playerRejoin(id) {
 		const player = this._players.get(id);
 		this._players.set(id, { score: player.score, status: 'active' });
+		if (this._giver === undefined || this._giver === null) {
+			this._giver = player.id;
+		};
 	}
 
 	nextStage() {
@@ -58,13 +70,14 @@ class Player {
 	}
 }
 
-Deno.test('update player status on join', () => {
+Deno.test('update player active status on join', () => {
 	const game = new Game();
 	const player = game.playerNew();
-	let playerStatus = game._players.get(player.id).status;
+	const playerStatus = game._players.get(player.id).status;
+	const expected = 'active';
 	assert(
-		playerStatus === 'active',
-		`player status should be "active". got "${playerStatus}"`
+		playerStatus === expected,
+		`player active status should be "${expected}". got "${playerStatus}"`
 	);
 });
 
@@ -72,10 +85,11 @@ Deno.test('update player status on leave', () => {
 	const game = new Game();
 	const player = game.playerNew();
 	player.leave();
-	let playerStatus = game._players.get(player.id).status;
+	const playerStatus = game._players.get(player.id).status;
+	const expected = 'inactive';
 	assert(
-		playerStatus === 'departed',
-		`player status should be "departed". got "${playerStatus}"`
+		playerStatus === expected,
+		`player status should be "${expected}". got "${playerStatus}"`
 	);
 });
 
@@ -104,19 +118,45 @@ Deno.test('enforce minimum player count for switching stage', () => {
 Deno.test('set first player as giver', () => {
 	const game = new Game();
 	const player = game.playerNew();
+	const expected = player.id;
 	assert(
-		game._giver === player.id,
-		`giver should be "${player.id}". got "${game._giver}"`
+		game._giver === expected,
+		`giver should be "${expected}". got "${game._giver}"`
 	);
 });
 
-Deno.test('keep giver even after leaving', () => {
+Deno.test('remove giver if they leave', () => {
 	const game = new Game();
 	const player = game.playerNew();
 	player.leave();
+	const expected = null;
 	assert(
-		game._giver === player.id,
-		`giver should be "${player.id}". got "${game._giver}"`
+		game._giver === expected,
+		`giver should be "${expected}". got "${game._giver}"`
+	);
+});
+
+Deno.test('set player as giver if no other active', () => {
+	const game = new Game();
+	const player1 = game.playerNew();
+	player1.leave();
+	const player2 = game.playerNew();
+	const expected = player2.id;
+	assert(
+		game._giver === expected,
+		`giver should be "${expected}". got "${game._giver}"`
+	);
+});
+
+Deno.test('set giver to next active player if current leaves', () => {
+	const game = new Game();
+	const player1 = game.playerNew();
+	const player2 = game.playerNew();
+	player1.leave();
+	const expected = player2.id;
+	assert(
+		game._giver === expected,
+		`giver should be "${expected}". got "${game._giver}"`
 	);
 });
 
