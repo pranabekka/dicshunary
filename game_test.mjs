@@ -122,6 +122,30 @@ Deno.test('move player back to active list on rejoin', () => {
 	);
 });
 
+Deno.test('order active players by re/joining', () => {
+	const game = new Game();
+	const player1 = game.playerAdd('The first');
+	const player2 = game.playerAdd('The second');
+	assert(
+		player1.id === Object.keys(game.playersActive)[0],
+		`first player should be "${player1}". got "${Object.entries(game.playersActive)[0]}"`
+	);
+	assert(
+		player2.id === Object.keys(game.playersActive)[1],
+		`second player should be "${player1}". got "${Object.entries(game.playersActive)[0]}"`
+	);
+	const player3 = game.playerAdd('The third');
+	game.playerRemove(player1.id);
+	assert(
+		player2.id === Object.keys(game.playersActive)[0],
+		`first player should be "${player2}". got "${Object.entries(game.playersActive)[0]}"`
+	);
+	assert(
+		player3.id === Object.keys(game.playersActive)[1],
+		`second player should be "${Object.entries(player3)}". got "${Object.entries(game.playersActive)[0]}"`
+	);
+});
+
 // Deno.test('+TEMPLATE+', () => {
 // 	exampleFunc();
 // });
