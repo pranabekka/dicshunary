@@ -83,7 +83,7 @@ Deno.test('disconnect players and save', () => {
 
 Deno.test('autofix name collision with disconnected players', () => {
 	const game = new Game();
-	const name = 'Leave n Collide'
+	const name = 'Leave n Collide';
 	const player1 = game.playerAdd(name);
 	game.playerRemove(player1.id);
 	const player2 = game.playerAdd(name);
@@ -99,6 +99,26 @@ Deno.test('save player scores', () => {
 	assert(
 		game.playersActive[id].score !== undefined,
 		'assert player should have a score (even 0)'
+	);
+});
+
+Deno.test('move player back to active list on rejoin', () => {
+	const game = new Game();
+	const name = 'ShallRejoin';
+	const { id: session1Id } = game.playerAdd(name);
+	game.playerRemove(session1Id);
+	const { id: session2Id } = game.playerAdd(name, session1Id);
+	assert(
+		session1Id === session2Id,
+		'player id should remain same on rejoin'
+	);
+	assert(
+		Object.keys(game.playersDisconnected).length === 0,
+		'there should be no disconnected players'
+	);
+	assert(
+		Object.keys(game.playersActive).length === 1,
+		'there should be one active player'
 	);
 });
 

@@ -8,10 +8,18 @@ export class Game {
 	scoresByRound = [];
 
 	playerAdd(name, id) {
-		id = 'player-' + crypto.randomUUID();
-		name = this.newNameParse(name);
-		this.playersActive[id] = { name, score: 0 };
-		return { type: 'join-ack', name, id };
+		if (this.playersDisconnected[id] !== undefined) {
+			name = this.newNameParse(name);
+			const { score } = this.playersDisconnected[id];
+			delete this.playersDisconnected[id];
+			this.playersActive[id] = { name, score };
+			return { type: 'join-ack', name, id };
+		} else {
+			id = 'player-' + crypto.randomUUID();
+			name = this.newNameParse(name);
+			this.playersActive[id] = { name, score: 0 };
+			return { type: 'join-ack', name, id };
+		}
 	}
 
 	playerRemove(id) {
