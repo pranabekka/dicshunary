@@ -8,6 +8,7 @@ class Game {
 	// rounds :: List<Map<player, {definition, List<voter>}>>
 	_rounds = new Array();
 
+	// also adds player as new joinee
 	playerNew() {
 		const player = new Player(this);
 		this._players.set(player.id, { score: 0, status: 'active' });
@@ -17,6 +18,11 @@ class Game {
 	playerLeave(id) {
 		const player = this._players.get(id);
 		this._players.set(id, { score: player.score, status: 'departed' });
+	}
+
+	playerRejoin(id) {
+		const player = this._players.get(id);
+		this._players.set(id, { score: player.score, status: 'active' });
 	}
 }
 
@@ -31,7 +37,7 @@ class Player {
 	}
 
 	rejoin() {
-		console.log('hi again!');
+		this.game.playerRejoin(this.id);
 	}
 }
 
@@ -53,6 +59,18 @@ Deno.test('update player status on leave', () => {
 	assert(
 		playerStatus === 'departed',
 		`player status should be "departed". got "${playerStatus}"`
+	);
+});
+
+Deno.test('update player status on rejoin', () => {
+	const game = new Game();
+	const player = game.playerNew();
+	player.leave();
+	player.rejoin();
+	let playerStatus = game._players.get(player.id).status;
+	assert(
+		playerStatus === 'active',
+		`player status should be "active". got "${playerStatus}"`
 	);
 });
 
