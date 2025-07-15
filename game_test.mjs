@@ -1,6 +1,6 @@
 'use strict';
 
-import { Game } from './server.js';
+import { Game } from './game.mjs';
 import { assert } from 'jsr:@std/assert';
 
 Deno.test('get join acknowledgement', () => {
