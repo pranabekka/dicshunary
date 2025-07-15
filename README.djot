@@ -22,18 +22,22 @@ relies on being served to get server url and connect
 
 ### TO DO
 
+[ ] make player active state absolute, boolean
+    departed -> inactive
+    status -> isActive
+    inactive giver -> deleted/new giver, reset round
+    player manager will handle connection and waiting
+    differentiate between dis/connected and in/active
+[ ] state transition to guessing
+
+### LATER
+
 [ ] game management vs player management split
-[ ] use map for player lists to preserve order
-    at least active player list
-    or maybe use a list, since the splice api
-    makes it much easier to reorder
-    maybe list only for tracking order, not info
+    player management is names and network addresses
+    and waiting players
 [ ] version server and clients
     // print before anything else
-[ ] state transition to giving word
 [ ] waiting queue for join/reconnect during reading/voting
     use playersPlaying + playersGone + playersWaiting
-[ ] util function to send messages with filter
-    for things like id, active status, etc.
-    `msgSendAllBut(exceptions)` or something
+    for player management
 [ ] main client: views, verification, and test-client logic

@@ -9,11 +9,15 @@ class Game {
 	_rounds = [];
 	_stages = [ 'giving', 'guessing', 'voting', 'scoring' ];
 	_stage = this._stages[0];
+	_giver;
 
 	// also adds player as new joinee
 	playerNew() {
 		const player = new Player(this);
 		this._players.set(player.id, { score: 0, status: 'active' });
+		if (this._giver === undefined || this._giver === null) {
+			this._giver = player.id;
+		};
 		return player;
 	}
 
@@ -94,6 +98,25 @@ Deno.test('enforce minimum player count for switching stage', () => {
 	assert(
 		game._stage === stage,
 		`game stage should be "${stage}" with less than three players. got "${game._stage}"`
+	);
+});
+
+Deno.test('set first player as giver', () => {
+	const game = new Game();
+	const player = game.playerNew();
+	assert(
+		game._giver === player.id,
+		`giver should be "${player.id}". got "${game._giver}"`
+	);
+});
+
+Deno.test('keep giver even after leaving', () => {
+	const game = new Game();
+	const player = game.playerNew();
+	player.leave();
+	assert(
+		game._giver === player.id,
+		`giver should be "${player.id}". got "${game._giver}"`
 	);
 });
 
