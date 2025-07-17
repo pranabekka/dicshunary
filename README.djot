@@ -15,18 +15,19 @@ multiple client connections to the server
 it's a single file with script and style tags.
 relies on being served to get server url and connect
 
-## TASKS
+## TODO
 
-### DOING
+### SOON
 
-[ ] separate interfaces for active and inactive players
-    i.e., separate classes with separate methods
-
-### TO DO
-
+[x] manage player as just id, not separate object
+[ ] insert checks in Game for false rejoin/leave signals
+    just in case?
+    test this as well
 [ ] state transition to guessing
+[ ] reset round if giver leaves
 [ ] change playerNew to playerJoin
     and merge functionality with rejoin
+    maybe not?
 
 ### LATER
 

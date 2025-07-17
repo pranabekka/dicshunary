@@ -3,7 +3,8 @@
 import { assert } from 'jsr:@std/assert';
 
 class Game {
-	// players :: Map<id, {score: number, status: (active | inactive)}>
+	// player :: `player-${UUIDv4}`
+	// players :: Map<player, {score: number, status: (active | inactive)}>
 	_players = new Map();
 	// rounds :: List<Map<player, {definition, List<voter>}>>
 	_rounds = [];
@@ -13,27 +14,26 @@ class Game {
 
 	// also adds player as new joinee
 	playerNew() {
-		const player = new Player(this);
-		const id = player.getId();
-		this._players.set(id, { score: 0, status: 'active' });
-		this._updateGiver(id);
+		const player = 'player-' + crypto.randomUUID();
+		this._players.set(player, { score: 0, status: 'active' });
+		this._updateGiver(player);
 		return player;
 	}
 
-	playerLeave(id) {
-		this._players.get(id).status = 'inactive';
-		this._updateGiver(id);
+	playerLeave(player) {
+		this._players.get(player).status = 'inactive';
+		this._updateGiver(player);
 	}
 
-	playerRejoin(id) {
-		this._players.get(id).status = 'active';
-		this._updateGiver(id);
+	playerRejoin(player) {
+		this._players.get(player).status = 'active';
+		this._updateGiver(player);
 	}
 
-	_updateGiver(id) {
+	_updateGiver(player) {
 		if (this._giver === undefined || this._giver === null) {
-			this._giver = id;
-		} else if (id === this._giver) {
+			this._giver = player;
+		} else if (player === this._giver) {
 			this._giver = null;
 			for (const [player, details] of this._players) {
 				if (details.status === 'active') {
@@ -56,29 +56,10 @@ class Game {
 	}
 }
 
-class Player {
-	constructor(game) {
-		this._game = game;
-		this._id = 'player-' + crypto.randomUUID();
-	}
-
-	getId() {
-		return this._id;
-	}
-
-	leave() {
-		this._game.playerLeave(this._id);
-	}
-
-	rejoin() {
-		this._game.playerRejoin(this._id);
-	}
-}
-
 Deno.test('update player active status on join', () => {
 	const game = new Game();
 	const player = game.playerNew();
-	const playerStatus = game._players.get(player._id).status;
+	const playerStatus = game._players.get(player).status;
 	const expected = 'active';
 	assert(
 		playerStatus === expected,
@@ -89,8 +70,8 @@ Deno.test('update player active status on join', () => {
 Deno.test('update player status on leave', () => {
 	const game = new Game();
 	const player = game.playerNew();
-	player.leave();
-	const playerStatus = game._players.get(player._id).status;
+	game.playerLeave(player);
+	const playerStatus = game._players.get(player).status;
 	const expected = 'inactive';
 	assert(
 		playerStatus === expected,
@@ -101,9 +82,9 @@ Deno.test('update player status on leave', () => {
 Deno.test('update player status on rejoin', () => {
 	const game = new Game();
 	const player = game.playerNew();
-	player.leave();
-	player.rejoin();
-	let playerStatus = game._players.get(player._id).status;
+	game.playerLeave(player);
+	game.playerRejoin(player);
+	let playerStatus = game._players.get(player).status;
 	assert(
 		playerStatus === 'active',
 		`player status should be "active". got "${playerStatus}"`
@@ -123,7 +104,7 @@ Deno.test('enforce minimum player count for switching stage', () => {
 Deno.test('set first player as giver', () => {
 	const game = new Game();
 	const player = game.playerNew();
-	const expected = player._id;
+	const expected = player;
 	assert(
 		game._giver === expected,
 		`giver should be "${expected}". got "${game._giver}"`
@@ -133,7 +114,7 @@ Deno.test('set first player as giver', () => {
 Deno.test('remove giver if they leave', () => {
 	const game = new Game();
 	const player = game.playerNew();
-	player.leave();
+	game.playerLeave(player);
 	const expected = null;
 	assert(
 		game._giver === expected,
@@ -144,9 +125,9 @@ Deno.test('remove giver if they leave', () => {
 Deno.test('set player as giver if no other active', () => {
 	const game = new Game();
 	const player1 = game.playerNew();
-	player1.leave();
+	game.playerLeave(player1);
 	const player2 = game.playerNew();
-	const expected = player2._id;
+	const expected = player2;
 	assert(
 		game._giver === expected,
 		`giver should be "${expected}". got "${game._giver}"`
@@ -157,8 +138,8 @@ Deno.test('set giver to next active player if current leaves', () => {
 	const game = new Game();
 	const player1 = game.playerNew();
 	const player2 = game.playerNew();
-	player1.leave();
-	const expected = player2._id;
+	game.playerLeave(player1);
+	const expected = player2;
 	assert(
 		game._giver === expected,
 		`giver should be "${expected}". got "${game._giver}"`
