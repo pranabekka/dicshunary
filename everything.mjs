@@ -15,16 +15,26 @@ class Game {
 	playerNew() {
 		const player = new Player(this);
 		this._players.set(player._id, { score: 0, status: 'active' });
-		if (this._giver === undefined || this._giver === null) {
-			this._giver = player._id;
-		};
+		this._updateGiver(player._id);
 		return player;
 	}
 
 	playerLeave(id) {
 		const player = this._players.get(id);
 		this._players.set(id, { score: player.score, status: 'inactive' });
-		if (this._giver === id) {
+		this._updateGiver(id);
+	}
+
+	playerRejoin(id) {
+		const player = this._players.get(id);
+		this._players.set(id, { score: player.score, status: 'active' });
+		this._updateGiver(id);
+	}
+
+	_updateGiver(id) {
+		if (this._giver === undefined || this._giver === null) {
+			this._giver = id;
+		} else if (id === this._giver) {
 			this._giver = null;
 			for (const [player, details] of this._players) {
 				if (details.status === 'active') {
@@ -32,14 +42,6 @@ class Game {
 					break;
 				}
 			}
-		}
-	}
-
-	playerRejoin(id) {
-		const player = this._players.get(id);
-		this._players.set(id, { score: player.score, status: 'active' });
-		if (this._giver === undefined || this._giver === null) {
-			this._giver = player._id;
 		};
 	}
 

@@ -19,10 +19,7 @@ relies on being served to get server url and connect
 
 ### DOING
 
-[ ] make player id and game private
-    they shouldn't be mutated
-    and i can make a getter if really required
-    by non-test code
+[ ] use single private method to update giver
 
 ### TO DO
 
