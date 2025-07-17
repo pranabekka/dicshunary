@@ -19,23 +19,18 @@ relies on being served to get server url and connect
 
 ### DOING
 
+[ ] make player id and game private
+    they shouldn't be mutated
+    and i can make a getter if really required
+    by non-test code
 
 ### TO DO
 
-[ ] make player active state absolute, boolean
-    departed -> inactive
-    inactive giver -> deleted/new giver, reset round
-    player manager will handle connection and waiting
-    differentiate between dis/connected and in/active
 [ ] separate interfaces for active and inactive players
     i.e., separate classes with separate methods
 [ ] state transition to guessing
 [ ] change playerNew to playerJoin
     and merge functionality with rejoin
-[ ] make player id and game private
-    they shouldn't be mutated
-    and i can make a getter if really required
-    by non-test code
 
 ### LATER
 
