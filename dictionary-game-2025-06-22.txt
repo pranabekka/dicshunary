@@ -249,11 +249,6 @@ and they can still chime in as they wait
 and it's a very short wait
 
 
-##
-
-add date/time to logs?
-
-
 ##  game loop
 
 so the server runs a constant loop
@@ -271,17 +266,17 @@ and update state on certain messages
 alright this is workable
 
 
-# lobby -> giving
+#  lobby -> giving
 
 first state transition is lobby to giving
 requires a giver and at least three total players
 
-# state error
+#  state error
 
 currently need a websocket message
 before detecting state detection error
 
-# state handler
+#  state handler
 
 switching on the messages inside the state
 will make the state handling code big
@@ -327,7 +322,7 @@ try that if i have complications
 maybe it'll even be simpler
 
 
-## testing
+##  testing
 
 spawning a server process and waiting for results
 has caused a lot of roadblocks
@@ -340,3 +335,54 @@ and i'll need to figure out how to wait for it
 the solution might be creating a timeout and waiting
 with an advanced solution of also killing it
 if i get the result before it finishes
+
+
+##  player as actor
+
+objects are like erlang actors
+and methods are structured messages
+within the same process
+while websockets send messages
+across a network boundary
+having such similar interfaces
+makes it easy to switch them out
+for testing and actual networked implementation
+
+when a Player joins a Game,
+the Game stores a reference to the Player
+this is the id of the Player for the Game
+the Game can then call methods on the Player
+as a way to message the Player
+about new state, such as giver and new players
+which the Player can use to inform actions
+such as giving a word, or submitting a definition
+by checking internal state before messaging Game
+through a single method call
+instead of multiple calls to query and update
+which is more costly across a network boundary
+
+i can create networked versions of game and player
+to send messages over the network boundary
+using the same methods as the base class
+call the relevant super method and then do extras
+so the base class remains amenable to easy testing
+and the networking logic remains separate and shallow
+it can manage ids and network addresses
+used for network and session boundaries
+like client connections failing
+
+a rough and incomplete example:
+
+class WSPlayer extends Player {
+	joinGame(...) {
+		super.joinGame(...);
+		...
+	}
+}
+
+class WSGame extends Game {
+	playerNew(...) {
+		super.playerNew(...);
+		...
+	}
+}
