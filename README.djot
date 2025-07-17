@@ -19,10 +19,11 @@ relies on being served to get server url and connect
 
 ### DOING
 
-### TO DO
-
 [ ] separate interfaces for active and inactive players
     i.e., separate classes with separate methods
+
+### TO DO
+
 [ ] state transition to guessing
 [ ] change playerNew to playerJoin
     and merge functionality with rejoin

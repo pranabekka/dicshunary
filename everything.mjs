@@ -21,14 +21,12 @@ class Game {
 	}
 
 	playerLeave(id) {
-		const player = this._players.get(id);
-		this._players.set(id, { score: player.score, status: 'inactive' });
+		this._players.get(id).status = 'inactive';
 		this._updateGiver(id);
 	}
 
 	playerRejoin(id) {
-		const player = this._players.get(id);
-		this._players.set(id, { score: player.score, status: 'active' });
+		this._players.get(id).status = 'active';
 		this._updateGiver(id);
 	}
 
