@@ -14,8 +14,9 @@ class Game {
 	// also adds player as new joinee
 	playerNew() {
 		const player = new Player(this);
-		this._players.set(player._id, { score: 0, status: 'active' });
-		this._updateGiver(player._id);
+		const id = player.getId();
+		this._players.set(id, { score: 0, status: 'active' });
+		this._updateGiver(id);
 		return player;
 	}
 
@@ -61,6 +62,10 @@ class Player {
 	constructor(game) {
 		this._game = game;
 		this._id = 'player-' + crypto.randomUUID();
+	}
+
+	getId() {
+		return this._id;
 	}
 
 	leave() {

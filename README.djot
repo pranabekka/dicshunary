@@ -19,8 +19,6 @@ relies on being served to get server url and connect
 
 ### DOING
 
-[ ] use single private method to update giver
-
 ### TO DO
 
 [ ] separate interfaces for active and inactive players
