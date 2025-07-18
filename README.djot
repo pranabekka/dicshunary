@@ -22,12 +22,11 @@ relies on being served to get server url and connect
 [ ] insert checks in Game for false rejoin/leave signals
     just in case?
     test this as well
-[x] state transition to guessing
 [ ] skip round if giver leaves
 [ ] change playerNew to playerJoin
     and merge functionality with rejoin
     maybe not?
-[ ] fix style/lint errors
+[x] fix style/lint errors
     see `deno lint` output
     nominally constant variable declared as let
     unused variables - could do _name or just not assign

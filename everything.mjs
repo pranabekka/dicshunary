@@ -95,7 +95,7 @@ Deno.test('update player status on rejoin', () => {
 	const player = game.playerNew();
 	game.playerLeave(player);
 	game.playerRejoin(player);
-	let playerStatus = game._players.get(player).status;
+	const playerStatus = game._players.get(player).status;
 	assert(
 		playerStatus === 'active',
 		`player status should be "active". got "${playerStatus}"`
@@ -174,9 +174,9 @@ Deno.test('set giver to next active player if current leaves', () => {
 Deno.test('switch stage if giver issues command', () => {
 	const game = new Game();
 	const player1 = game.playerNew();
-	const player2 = game.playerNew();
-	const player3 = game.playerNew();
-	const player4 = game.playerNew();
+	const _player2 = game.playerNew();
+	const _player3 = game.playerNew();
+	const _player4 = game.playerNew();
 	game.givingToGuessing(player1, 'eecksampul');
 	const expected = game._stages[1];
 	assert(
@@ -187,10 +187,10 @@ Deno.test('switch stage if giver issues command', () => {
 
 Deno.test('do not switch stage if min players met but player not giver', () => {
 	const game = new Game();
-	const player1 = game.playerNew();
+	const _player1 = game.playerNew();
 	const player2 = game.playerNew();
-	const player3 = game.playerNew();
-	const player4 = game.playerNew();
+	const _player3 = game.playerNew();
+	const _player4 = game.playerNew();
 	game.givingToGuessing(player2, 'bad');
 	const expected = game._stages[0];
 	assert(
@@ -202,8 +202,8 @@ Deno.test('do not switch stage if min players met but player not giver', () => {
 Deno.test('set word from giver in game', () => {
 	const game = new Game();
 	const player1 = game.playerNew();
-	const player2 = game.playerNew();
-	const player3 = game.playerNew();
+	const _player2 = game.playerNew();
+	const _player3 = game.playerNew();
 	const word = 'wurd';
 	game.givingToGuessing(player1, word);
 	assert(
