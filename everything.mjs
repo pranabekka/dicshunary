@@ -6,11 +6,12 @@ class Game {
 	// player :: `player-${UUIDv4}`
 	// players :: Map<player, {score: number, status: (active | inactive)}>
 	_players = new Map();
-	// rounds :: List<Map<player, {definition, List<voter>}>>
-	_rounds = [];
-	_stages = [ 'giving', 'guessing', 'voting', 'scoring' ];
-	_stage = this._stages[0];
-	_giver;
+	// giver :: player
+	// rounds :: List<{giver, stage, word, Map<player, score>}>
+	_stages = [ 'giving', 'defining', 'voting', 'scoring' ];
+	_rounds = [
+		{giver: null, stage: this._stages[0]},
+	];
 
 	// also adds player as new joinee
 	playerNew() {
@@ -33,18 +34,20 @@ class Game {
 	givingToGuessing(player, word) {
 		const progress = this._nextStage(player);
 		if (progress === true) {
-			this._word = word;
+			const currentRound = this._currentRoundGet();
+			currentRound.word = word;
 		}
 	}
 
 	_updateGiver(player) {
-		if (this._giver === undefined || this._giver === null) {
-			this._giver = player;
-		} else if (player === this._giver) {
-			this._giver = null;
+		const currentRound = this._currentRoundGet();
+		if (currentRound.giver === null) {
+			currentRound.giver = player;
+		} else if (player === currentRound.giver) {
+			currentRound.giver = null;
 			for (const [player, details] of this._players) {
 				if (details.status === 'active') {
-					this._giver = player;
+					currentRound.giver = player;
 					break;
 				}
 			}
@@ -52,18 +55,23 @@ class Game {
 	}
 
 	_nextStage(player) {
+		const currentRound = this._currentRoundGet();
 		const activePlayerCount = [...this._players.values()].filter(data => {
 			return data.status === 'active';
 		}).length;
-		if (player !== this._giver || activePlayerCount < 3) {
+		if (player !== currentRound.giver || activePlayerCount < 3) {
 			return false;
 		} else {
-			const idxCurr = this._stages.indexOf(this._stage);
+			const idxCurr = this._stages.indexOf(currentRound.stage);
 			const idxNext = idxCurr === this._stages.length - 1 ?
 				0 : idxCurr + 1;
-			this._stage = this._stages[idxNext];
+			currentRound.stage = this._stages[idxNext];
 			return true;
 		}
+	}
+
+	_currentRoundGet() {
+		return this._rounds[this._rounds.length - 1];
 	}
 }
 
@@ -104,25 +112,28 @@ Deno.test('update player status on rejoin', () => {
 
 Deno.test('enforce minimum active player count for switching stage', () => {
 	const game = new Game();
-	const expected = game._stages[0];
 	game._nextStage();
+	const expected = game._stages[0];
+	let currentRound = game._currentRoundGet();
 	assert(
-		game._stage === expected,
-		`game stage should be "${expected}" with 0 players. got "${game._stage}"`
+		currentRound.stage === expected,
+		`game stage should be "${expected}" with 0 players. got "${currentRound.stage}"`
 	);
 	const player1 = game.playerNew();
 	game._nextStage(player1);
+	currentRound = game._currentRoundGet();
 	assert(
-		game._stage === expected,
-		`game stage should be "${expected}" with 1 player (less than 3). got "${game._stage}"`
+		currentRound.stage === expected,
+		`game stage should be "${expected}" with 1 player (less than 3). got "${currentRound.stage}"`
 	);
 	const player2 = game.playerNew();
 	const player3 = game.playerNew();
 	game.playerLeave(player3);
 	game._nextStage(player1);
+	currentRound = game._currentRoundGet();
 	assert(
-		game._stage === expected,
-		`game stage should be "${expected}" with less than three active players. got "${game._stage}"`
+		currentRound.stage === expected,
+		`game stage should be "${expected}" with less than three active players. got "${currentRound.stage}"`
 	);
 });
 
@@ -130,9 +141,10 @@ Deno.test('set first player as giver', () => {
 	const game = new Game();
 	const player = game.playerNew();
 	const expected = player;
+	const currentRound = game._currentRoundGet();
 	assert(
-		game._giver === expected,
-		`giver should be "${expected}". got "${game._giver}"`
+		currentRound.giver === expected,
+		`giver should be "${expected}". got "${currentRound.giver}"`
 	);
 });
 
@@ -141,9 +153,10 @@ Deno.test('remove giver if they leave', () => {
 	const player = game.playerNew();
 	game.playerLeave(player);
 	const expected = null;
+	const currentRound = game._currentRoundGet();
 	assert(
-		game._giver === expected,
-		`giver should be "${expected}". got "${game._giver}"`
+		currentRound.giver === expected,
+		`giver should be "${expected}". got "${currentRound.giver}"`
 	);
 });
 
@@ -153,9 +166,10 @@ Deno.test('set player as giver if no other active', () => {
 	game.playerLeave(player1);
 	const player2 = game.playerNew();
 	const expected = player2;
+	const currentRound = game._currentRoundGet();
 	assert(
-		game._giver === expected,
-		`giver should be "${expected}". got "${game._giver}"`
+		currentRound.giver === expected,
+		`giver should be "${expected}". got "${currentRound.giver}"`
 	);
 });
 
@@ -165,9 +179,10 @@ Deno.test('set giver to next active player if current leaves', () => {
 	const player2 = game.playerNew();
 	game.playerLeave(player1);
 	const expected = player2;
+	const currentRound = game._currentRoundGet();
 	assert(
-		game._giver === expected,
-		`giver should be "${expected}". got "${game._giver}"`
+		currentRound.giver === expected,
+		`giver should be "${expected}". got "${currentRound.giver}"`
 	);
 });
 
@@ -179,9 +194,10 @@ Deno.test('switch stage if giver issues command', () => {
 	const _player4 = game.playerNew();
 	game.givingToGuessing(player1, 'eecksampul');
 	const expected = game._stages[1];
+	const currentRound = game._currentRoundGet();
 	assert(
-		game._stage === expected,
-		`game stage should be "${expected}". got "${game._stage}"`
+		currentRound.stage === expected,
+		`game stage should be "${expected}". got "${currentRound.stage}"`
 	);
 });
 
@@ -192,10 +208,11 @@ Deno.test('do not switch stage if min players met but player not giver', () => {
 	const _player3 = game.playerNew();
 	const _player4 = game.playerNew();
 	game.givingToGuessing(player2, 'bad');
+	const currentRound = game._currentRoundGet();
 	const expected = game._stages[0];
 	assert(
-		game._stage === expected,
-		`game stage should be "${expected}". got "${game._stage}"`
+		currentRound.stage === expected,
+		`game stage should be "${expected}". got "${currentRound.stage}"`
 	);
 });
 
@@ -206,9 +223,10 @@ Deno.test('set word from giver in game', () => {
 	const _player3 = game.playerNew();
 	const word = 'wurd';
 	game.givingToGuessing(player1, word);
+	const currentRound = game._currentRoundGet();
 	assert(
-		game._word === word,
-		`word should be "${word}". got "${game._word}"`
+		currentRound.word === word,
+		`word should be "${word}". got "${currentRound.word}"`
 	);
 });
 
@@ -220,15 +238,16 @@ Deno.test('do not set word if unable to progress stage', () => {
 	const word = 'wurd';
 	game.givingToGuessing(player2, word);
 	const expected = undefined;
+	const currentRound = game._currentRoundGet();
 	assert(
-		game._word === expected,
-		`word should be "${expected}". got "${game._word}"`
+		currentRound.word === expected,
+		`word should be "${expected}". got "${currentRound.word}"`
 	);
 	game.playerLeave(player3);
 	game.givingToGuessing(player1, word);
 	assert(
-		game._word === expected,
-		`word should be "${expected}". got "${game._word}"`
+		currentRound.word === expected,
+		`word should be "${expected}". got "${currentRound.word}"`
 	);
 });
 
