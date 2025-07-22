@@ -9,9 +9,11 @@ class Game {
 	// giver :: player
 	// rounds :: List<{giver, stage, word, Map<player, score>}>
 	_stages = [ 'giving', 'defining', 'voting', 'scoring' ];
-	_rounds = [
-		{giver: null, stage: this._stages[0]},
-	];
+	_rounds = [];
+
+	constructor() {
+		this._roundNew();
+	}
 
 	// also adds player as new joinee
 	playerNew() {
@@ -40,14 +42,16 @@ class Game {
 	}
 
 	_updateGiver(player) {
-		const currentRound = this._currentRoundGet();
-		if (currentRound.giver === null) {
-			currentRound.giver = player;
-		} else if (player === currentRound.giver) {
-			currentRound.giver = null;
+		if (this._currentRoundGet().giver === null) {
+			this._currentRoundGet().giver = player;
+		} else if (player === this._currentRoundGet().giver) {
+			this._currentRoundGet().giver = null;
+			if (this._currentRoundGet().stage === this._stages[1]) {
+				this._roundNew();
+			}
 			for (const [player, details] of this._players) {
 				if (details.status === 'active') {
-					currentRound.giver = player;
+					this._currentRoundGet().giver = player;
 					break;
 				}
 			}
@@ -72,6 +76,12 @@ class Game {
 
 	_currentRoundGet() {
 		return this._rounds[this._rounds.length - 1];
+	}
+
+	_roundNew() {
+		this._rounds.push(
+			{ giver: null, stage: this._stages[0] }
+		);
 	}
 }
 
@@ -282,6 +292,53 @@ Deno.test('do not set word if unable to progress stage', () => {
 	assert(
 		resultNotMinActive === expected,
 		`word should be "${expected}" without min active players. got "${resultNotMinActive}"`
+	);
+});
+
+Deno.test('skip round if giver leaves during defining', () => {
+	// expect to be on 2nd round
+	const expected = 2;
+
+	const game = new Game();
+	const player1 = game.playerNew();
+	const player2 = game.playerNew();
+	const player3 = game.playerNew();
+	const player4 = game.playerNew();
+	game.givingToGuessing(player1, 'leavingsoon');
+	game.playerLeave(player1);
+
+	const result = game._rounds.length;
+	assert(
+		result === expected,
+		`expected to be on round ${expected}. got round ${result}`
+	);
+});
+
+Deno.test('use next round after skipping first', () => {
+	const word1 = 'first';
+	const word2 = 'second';
+	const game = new Game();
+	const player1 = game.playerNew();
+	const player2 = game.playerNew();
+	const player3 = game.playerNew();
+	const player4 = game.playerNew();
+	game.givingToGuessing(player1, word1);
+	game.playerLeave(player1);
+	game.givingToGuessing(player2, word2);
+
+	const expectedWord = word2;
+	const expectedGiver = player2;
+
+	const resultWord = game._rounds[1].word;
+	assert(
+		resultWord === expectedWord,
+		`expected ${expectedWord}. got ${resultWord}`
+	);
+
+	const resultGiver = game._rounds[1].giver;
+	assert(
+		resultGiver === expectedGiver,
+		`expected ${expectedGiver}. got ${resultGiver}`
 	);
 });
 
