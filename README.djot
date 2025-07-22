@@ -19,7 +19,7 @@ relies on being served to get server url and connect
 
 ### SOON
 
-[ ] skip round if giver leaves
+[ ] skip round if giver leaves while defining
 [ ] change playerNew to playerJoin
     and merge functionality with rejoin
     maybe not?

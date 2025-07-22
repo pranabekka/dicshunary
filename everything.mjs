@@ -76,87 +76,104 @@ class Game {
 }
 
 Deno.test('update player active status on join', () => {
+	const expected = 'active';
+
 	const game = new Game();
 	const player = game.playerNew();
-	const playerStatus = game._players.get(player).status;
-	const expected = 'active';
+
+	const result = game._players.get(player).status;
 	assert(
-		playerStatus === expected,
-		`player active status should be "${expected}". got "${playerStatus}"`
+		result === expected,
+		`player active status should be "${expected}" on join. got "${result}"`
 	);
 });
 
 Deno.test('update player status on leave', () => {
+	const expected = 'inactive';
+
 	const game = new Game();
 	const player = game.playerNew();
 	game.playerLeave(player);
-	const playerStatus = game._players.get(player).status;
-	const expected = 'inactive';
+
+	const result = game._players.get(player).status;
 	assert(
-		playerStatus === expected,
-		`player status should be "${expected}". got "${playerStatus}"`
+		result === expected,
+		`player status should be "${expected}" on leave. got "${result}"`
 	);
 });
 
 Deno.test('update player status on rejoin', () => {
+	const expected = 'active';
+
 	const game = new Game();
 	const player = game.playerNew();
 	game.playerLeave(player);
 	game.playerRejoin(player);
-	const playerStatus = game._players.get(player).status;
+
+	const result = game._players.get(player).status;
 	assert(
-		playerStatus === 'active',
-		`player status should be "active". got "${playerStatus}"`
+		result === expected,
+		`player status should be "${expected}" on rejoin. got "${result}"`
 	);
 });
 
 Deno.test('enforce minimum active player count for switching stage', () => {
 	const game = new Game();
 	game._nextStage();
+
 	const expected = game._stages[0];
-	let currentRound = game._currentRoundGet();
+
+	const resultNoPlayers = game._currentRoundGet().stage;
 	assert(
-		currentRound.stage === expected,
-		`game stage should be "${expected}" with 0 players. got "${currentRound.stage}"`
+		resultNoPlayers === expected,
+		`game stage should be "${expected}" with 0 players. got "${resultNoPlayers}"`
 	);
+
 	const player1 = game.playerNew();
 	game._nextStage(player1);
-	currentRound = game._currentRoundGet();
+
+	const resultOnePlayer = game._currentRoundGet().stage;
 	assert(
-		currentRound.stage === expected,
-		`game stage should be "${expected}" with 1 player (less than 3). got "${currentRound.stage}"`
+		resultOnePlayer === expected,
+		`game stage should be "${expected}" with 1 player (less than 3). got "${resultOnePlayer}"`
 	);
+
 	const player2 = game.playerNew();
 	const player3 = game.playerNew();
 	game.playerLeave(player3);
 	game._nextStage(player1);
-	currentRound = game._currentRoundGet();
+
+	const resultActive = game._currentRoundGet().stage;
 	assert(
-		currentRound.stage === expected,
-		`game stage should be "${expected}" with less than three active players. got "${currentRound.stage}"`
+		resultActive === expected,
+		`game stage should be "${expected}" with less than three active players. got "${resultActive}"`
 	);
 });
 
 Deno.test('set first player as giver', () => {
 	const game = new Game();
 	const player = game.playerNew();
+
 	const expected = player;
-	const currentRound = game._currentRoundGet();
+
+	const result = game._currentRoundGet().giver;
 	assert(
-		currentRound.giver === expected,
-		`giver should be "${expected}". got "${currentRound.giver}"`
+		result === expected,
+		`giver should be "${expected}" if first player. got "${result}"`
 	);
 });
 
 Deno.test('remove giver if they leave', () => {
+	const expected = null;
+
 	const game = new Game();
 	const player = game.playerNew();
 	game.playerLeave(player);
-	const expected = null;
-	const currentRound = game._currentRoundGet();
+
+	const result = game._currentRoundGet().giver;
 	assert(
-		currentRound.giver === expected,
-		`giver should be "${expected}". got "${currentRound.giver}"`
+		result === expected,
+		`giver should be "${expected}" if last player leaves. got "${result}"`
 	);
 });
 
@@ -165,11 +182,13 @@ Deno.test('set player as giver if no other active', () => {
 	const player1 = game.playerNew();
 	game.playerLeave(player1);
 	const player2 = game.playerNew();
+
 	const expected = player2;
-	const currentRound = game._currentRoundGet();
+
+	const result = game._currentRoundGet().giver;
 	assert(
-		currentRound.giver === expected,
-		`giver should be "${expected}". got "${currentRound.giver}"`
+		result === expected,
+		`giver should be "${expected}" if no other active players. got "${result}"`
 	);
 });
 
@@ -178,84 +197,103 @@ Deno.test('set giver to next active player if current leaves', () => {
 	const player1 = game.playerNew();
 	const player2 = game.playerNew();
 	game.playerLeave(player1);
+
 	const expected = player2;
-	const currentRound = game._currentRoundGet();
+
+	const result = game._currentRoundGet().giver;
 	assert(
-		currentRound.giver === expected,
-		`giver should be "${expected}". got "${currentRound.giver}"`
+		result === expected,
+		`giver should be "${expected}" if previous leaves. got "${result}"`
 	);
 });
 
 Deno.test('switch stage if giver issues command', () => {
 	const game = new Game();
+
+	const expected = game._stages[1];
+
 	const player1 = game.playerNew();
 	const _player2 = game.playerNew();
 	const _player3 = game.playerNew();
 	const _player4 = game.playerNew();
 	game.givingToGuessing(player1, 'eecksampul');
-	const expected = game._stages[1];
-	const currentRound = game._currentRoundGet();
+
+	const result = game._currentRoundGet().stage;
 	assert(
-		currentRound.stage === expected,
-		`game stage should be "${expected}". got "${currentRound.stage}"`
+		result === expected,
+		`game stage should be "${expected}" if giver. got "${result}"`
 	);
 });
 
 Deno.test('do not switch stage if min players met but player not giver', () => {
 	const game = new Game();
+
+	const expected = game._stages[0];
+
 	const _player1 = game.playerNew();
 	const player2 = game.playerNew();
 	const _player3 = game.playerNew();
 	const _player4 = game.playerNew();
 	game.givingToGuessing(player2, 'bad');
-	const currentRound = game._currentRoundGet();
-	const expected = game._stages[0];
+
+	const result = game._currentRoundGet().stage;
 	assert(
-		currentRound.stage === expected,
-		`game stage should be "${expected}". got "${currentRound.stage}"`
+		result === expected,
+		`game stage should be "${expected}" if not giver. got "${result}"`
 	);
 });
 
 Deno.test('set word from giver in game', () => {
+	const expected = 'wurd';
+
 	const game = new Game();
 	const player1 = game.playerNew();
 	const _player2 = game.playerNew();
 	const _player3 = game.playerNew();
-	const word = 'wurd';
+	const word = expected;
 	game.givingToGuessing(player1, word);
-	const currentRound = game._currentRoundGet();
+
+	const result = game._currentRoundGet().word;
 	assert(
-		currentRound.word === word,
-		`word should be "${word}". got "${currentRound.word}"`
+		result === word,
+		`word should be "${word}" when sent by giver. got "${result}"`
 	);
 });
 
 Deno.test('do not set word if unable to progress stage', () => {
+	const expected = undefined;
+
 	const game = new Game();
 	const player1 = game.playerNew();
 	const player2 = game.playerNew();
 	const player3 = game.playerNew();
-	const word = 'wurd';
-	game.givingToGuessing(player2, word);
-	const expected = undefined;
-	const currentRound = game._currentRoundGet();
+	game.givingToGuessing(player2, 'notGiverI');
+
+	const resultNotGiver = game._currentRoundGet().word;
 	assert(
-		currentRound.word === expected,
-		`word should be "${expected}". got "${currentRound.word}"`
+		resultNotGiver === expected,
+		`word should be "${expected}" with non-giver. got "${resultNotGiver}"`
 	);
+
 	game.playerLeave(player3);
-	game.givingToGuessing(player1, word);
+	game.givingToGuessing(player1, 'notNuffActive');
+
+	const resultNotMinActive = game._currentRoundGet().word;
 	assert(
-		currentRound.word === expected,
-		`word should be "${expected}". got "${currentRound.word}"`
+		resultNotMinActive === expected,
+		`word should be "${expected}" without min active players. got "${resultNotMinActive}"`
 	);
 });
 
 // Deno.test('-TEMPLATE-', () => {
+// 	const expected = ;
+//
 // 	const game = new Game();
 // 	const player = game.playerNew();
+//
+// 	const result = ;
 // 	assert(
-// 		-ASSERTION-,
-// 		`-MESSAGE-`
+// 		result === expected,
+// 		`expected ${expected}. got ${result}`
 // 	);
 // });
