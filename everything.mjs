@@ -3,8 +3,12 @@
 import { assert } from 'jsr:@std/assert';
 
 class Game {
+	_playerStatus = {
+		active: 'active-6b33e19',
+		inactive: 'inactive-f956a13',
+	}
 	// player :: `player-${UUIDv4}`
-	// players :: Map<player, {score: number, status: (active | inactive)}>
+	// players :: Map<player, {score: number, status: (playerStatus.active | playerStatus.inactive)}>
 	_players = new Map();
 	// giver :: player
 	// rounds :: List<{giver, stage, word, Map<player, score>}>
@@ -23,18 +27,18 @@ class Game {
 	// also adds player as new joinee
 	playerNew() {
 		const player = 'player-' + crypto.randomUUID();
-		this._players.set(player, { score: 0, status: 'active' });
+		this._players.set(player, { score: 0, status: this._playerStatus.active });
 		this._updateGiver(player);
 		return player;
 	}
 
 	playerLeave(player) {
-		this._players.get(player).status = 'inactive';
+		this._players.get(player).status = this._playerStatus.inactive;
 		this._updateGiver(player);
 	}
 
 	playerRejoin(player) {
-		this._players.get(player).status = 'active';
+		this._players.get(player).status = this._playerStatus.active;
 		this._updateGiver(player);
 	}
 
@@ -55,7 +59,7 @@ class Game {
 				this._roundNew();
 			}
 			for (const [player, details] of this._players) {
-				if (details.status === 'active') {
+				if (details.status === this._playerStatus.active) {
 					this._currentRoundGet().giver = player;
 					break;
 				}
@@ -66,7 +70,7 @@ class Game {
 	_nextStage(player) {
 		const currentRound = this._currentRoundGet();
 		const activePlayerCount = [...this._players.values()].filter(data => {
-			return data.status === 'active';
+			return data.status === this._playerStatus.active;
 		}).length;
 		if (player !== currentRound.giver || activePlayerCount < 3) {
 			return false;
@@ -100,10 +104,10 @@ class Game {
 }
 
 Deno.test('update player active status on join', () => {
-	const expected = 'active';
-
 	const game = new Game();
 	const player = game.playerNew();
+
+	const expected = game._playerStatus.active;
 
 	const result = game._players.get(player).status;
 	assert(
@@ -113,11 +117,11 @@ Deno.test('update player active status on join', () => {
 });
 
 Deno.test('update player status on leave', () => {
-	const expected = 'inactive';
-
 	const game = new Game();
 	const player = game.playerNew();
 	game.playerLeave(player);
+
+	const expected = game._playerStatus.inactive;
 
 	const result = game._players.get(player).status;
 	assert(
@@ -127,12 +131,12 @@ Deno.test('update player status on leave', () => {
 });
 
 Deno.test('update player status on rejoin', () => {
-	const expected = 'active';
-
 	const game = new Game();
 	const player = game.playerNew();
 	game.playerLeave(player);
 	game.playerRejoin(player);
+
+	const expected = game._playerStatus.active;
 
 	const result = game._players.get(player).status;
 	assert(
