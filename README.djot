@@ -19,7 +19,7 @@ relies on being served to get server url and connect
 
 ### SOON
 
-[x] use keys for player status instead of strings
+[x] save player definitions to round
 [ ] change playerNew to playerJoin
     and merge functionality with rejoin
     maybe not?

@@ -50,6 +50,14 @@ class Game {
 		}
 	}
 
+	definitionSubmit(player, definition) {
+		const currentRound = this._currentRoundGet();
+		if (currentRound.definitions === undefined) {
+			currentRound.definitions = {};
+		}
+		currentRound.definitions[player] = definition;
+	}
+
 	_updateGiver(player) {
 		if (this._currentRoundGet().giver === null) {
 			this._currentRoundGet().giver = player;
@@ -357,6 +365,34 @@ Deno.test('use next round after skipping first', () => {
 	assert(
 		resultGiver === expectedGiver,
 		`expected ${expectedGiver}. got ${resultGiver}`
+	);
+});
+
+// NOTE: this test might be flaky?
+// i'm comparing objects as maps by JSON string representation
+Deno.test('save player definitions to round', () => {
+	const game = new Game();
+	const player1 = game.playerNew();
+	const player2 = game.playerNew();
+	const player3 = game.playerNew();
+	game.givingToGuessing(player1, 'thingummy');
+	const definition1 = 'the correct definition';
+	const definition2 = 'a made up definition';
+	const definition3 = 'also a made up definition';
+	game.definitionSubmit(player1, definition1);
+	game.definitionSubmit(player2, definition2);
+	game.definitionSubmit(player3, definition3);
+
+	const expected = JSON.stringify({
+		[player1]: definition1,
+		[player2]: definition2,
+		[player3]: definition3,
+	});
+
+	const result = JSON.stringify(game._currentRoundGet().definitions);
+	assert(
+		result === expected,
+		`expected ${expected} for definition submissions. got ${result}`
 	);
 });
 
