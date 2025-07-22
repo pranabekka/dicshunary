@@ -8,7 +8,12 @@ class Game {
 	_players = new Map();
 	// giver :: player
 	// rounds :: List<{giver, stage, word, Map<player, score>}>
-	_stages = [ 'giving', 'defining', 'voting', 'scoring' ];
+	_stages = {
+		giving: 'giving-a204b75',
+		defining: 'defining-ed84077',
+		voting: 'voting-227a041',
+		scoring: 'scoring-5bcacd0',
+	};
 	_rounds = [];
 
 	constructor() {
@@ -46,7 +51,7 @@ class Game {
 			this._currentRoundGet().giver = player;
 		} else if (player === this._currentRoundGet().giver) {
 			this._currentRoundGet().giver = null;
-			if (this._currentRoundGet().stage === this._stages[1]) {
+			if (this._currentRoundGet().stage === this._stages.defining) {
 				this._roundNew();
 			}
 			for (const [player, details] of this._players) {
@@ -66,11 +71,20 @@ class Game {
 		if (player !== currentRound.giver || activePlayerCount < 3) {
 			return false;
 		} else {
-			const idxCurr = this._stages.indexOf(currentRound.stage);
-			const idxNext = idxCurr === this._stages.length - 1 ?
-				0 : idxCurr + 1;
-			currentRound.stage = this._stages[idxNext];
-			return true;
+			switch (currentRound.stage) {
+				case this._stages.giving:
+					currentRound.stage = this._stages.defining;
+					return true;
+				case this._stages.defining:
+					currentRound.stage = this._stages.voting;
+					return true;
+				case this._stages.voting:
+					currentRound.stage = this._stages.scoring;
+					return true;
+				case this._stages.scoring:
+					currentRound.stage = this._stages.giving;
+					return true;
+			}
 		}
 	}
 
@@ -80,7 +94,7 @@ class Game {
 
 	_roundNew() {
 		this._rounds.push(
-			{ giver: null, stage: this._stages[0] }
+			{ giver: null, stage: this._stages.giving }
 		);
 	}
 }
@@ -131,7 +145,7 @@ Deno.test('enforce minimum active player count for switching stage', () => {
 	const game = new Game();
 	game._nextStage();
 
-	const expected = game._stages[0];
+	const expected = game._stages.giving;
 
 	const resultNoPlayers = game._currentRoundGet().stage;
 	assert(
@@ -220,7 +234,7 @@ Deno.test('set giver to next active player if current leaves', () => {
 Deno.test('switch stage if giver issues command', () => {
 	const game = new Game();
 
-	const expected = game._stages[1];
+	const expected = game._stages.defining;
 
 	const player1 = game.playerNew();
 	const _player2 = game.playerNew();
@@ -238,7 +252,7 @@ Deno.test('switch stage if giver issues command', () => {
 Deno.test('do not switch stage if min players met but player not giver', () => {
 	const game = new Game();
 
-	const expected = game._stages[0];
+	const expected = game._stages.giving;
 
 	const _player1 = game.playerNew();
 	const player2 = game.playerNew();

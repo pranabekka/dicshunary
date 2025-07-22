@@ -19,9 +19,7 @@ relies on being served to get server url and connect
 
 ### SOON
 
-[x] skip round if giver leaves while defining
-[ ] test use of next round
-[ ] use keys for stages instead of indexes
+[x] use keys for stages instead of indexes
 [ ] use keys for player status instead of strings
 [ ] change playerNew to playerJoin
     and merge functionality with rejoin
