@@ -7,8 +7,15 @@ class Game {
 		active: 'active-6b33e19',
 		inactive: 'inactive-f956a13',
 	}
-	// player :: `player-${UUIDv4}`
-	// players :: Map<player, {score: number, status: (playerStatus.active | playerStatus.inactive)}>
+	// type Player = String<'player-', UUID>
+	// type PlayerStatus = One<_playerStatus.active, _playerStatus.inactive>
+	// type _players = Map<
+	// 	Player,
+	// 	Struct<
+	// 		score: Number,
+	// 		status: PlayerStatus
+	// 	>
+	// >
 	_players = new Map();
 	_stages = {
 		giving: 'giving-a204b75',
@@ -16,8 +23,16 @@ class Game {
 		voting: 'voting-227a041',
 		scoring: 'scoring-5bcacd0',
 	};
-	// giver :: player
-	// rounds :: List<{giver, stage, word, Map<player, score>}>
+	// type Giver = Player
+	// type Stage = OneOf<_stages.giving, _stages.defining, _stages.voting, _stages.scoring>
+	// type _rounds = List<
+	// 	Struct<
+	// 		giver: Giver,
+	// 		stage: Stage,
+	// 		word: String,
+	// 		definitions: Map<Player, String>
+	// 	>
+	// >
 	_rounds = [];
 
 	constructor() {
