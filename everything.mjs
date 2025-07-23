@@ -10,14 +10,14 @@ class Game {
 	// player :: `player-${UUIDv4}`
 	// players :: Map<player, {score: number, status: (playerStatus.active | playerStatus.inactive)}>
 	_players = new Map();
-	// giver :: player
-	// rounds :: List<{giver, stage, word, Map<player, score>}>
 	_stages = {
 		giving: 'giving-a204b75',
 		defining: 'defining-ed84077',
 		voting: 'voting-227a041',
 		scoring: 'scoring-5bcacd0',
 	};
+	// giver :: player
+	// rounds :: List<{giver, stage, word, Map<player, score>}>
 	_rounds = [];
 
 	constructor() {
