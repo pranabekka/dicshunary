@@ -19,17 +19,30 @@ relies on being served to get server url and connect
 
 ### SOON
 
-[ ] change playerNew to playerJoin
-    and merge functionality with rejoin
-    maybe not?
+[ ] defining to voting
+    all active must have submitted definitions to proceed
+    must skip if giver goes inactive in voting
+[ ] voting to scoring
+    all active must have voted to proceed
+    save scores even if giver leaves
+    maybe give scores to next giver to read
+[ ] give round score
+    per player name, definition, voted by, voted for,
+    if giver, if voted for giver
+[ ] give game score
+    table of name, total, rounds
+    star in round if giver that round
+[ ] scoring to giving
+    switch giver
+    show scores
+
+### LATER
+
 [ ] split out player into seperate object as actor
     with methods as messages
     and references as ids
     in preparation for networking
     see notes for more details
-
-### LATER
-
 [ ] insert checks in Game for false rejoin/leave signals
     just in case?
     test this as well
@@ -42,3 +55,6 @@ relies on being served to get server url and connect
     use playersPlaying + playersGone + playersWaiting
     for player management
 [ ] main client: views, verification, and test-client logic
+[ ] change playerNew to playerJoin
+    and merge functionality with rejoin
+    maybe not?
