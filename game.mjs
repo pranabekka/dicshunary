@@ -1,17 +1,11 @@
 'use strict';
 
 export class Game {
-	_playerStatus = {
-		active: 'active-6b33e19',
-		inactive: 'inactive-f956a13',
-	}
 	// type Player = String<'player-', UUID>
-	// type PlayerStatus = One<_playerStatus.active, _playerStatus.inactive>
 	// type _players = Map<
 	// 	Player,
 	// 	Struct<
 	// 		score: Number,
-	// 		status: PlayerStatus
 	// 	>
 	// >
 	_players = new Map();
@@ -40,19 +34,9 @@ export class Game {
 	// also adds player as new joinee
 	playerNew() {
 		const player = 'player-' + crypto.randomUUID();
-		this._players.set(player, { score: 0, status: this._playerStatus.active });
+		this._players.set(player, { score: 0 });
 		this._updateGiver(player);
 		return player;
-	}
-
-	playerLeave(player) {
-		this._players.get(player).status = this._playerStatus.inactive;
-		this._updateGiver(player);
-	}
-
-	playerRejoin(player) {
-		this._players.get(player).status = this._playerStatus.active;
-		this._updateGiver(player);
 	}
 
 	givingToGuessing(player, word) {
@@ -74,26 +58,12 @@ export class Game {
 	_updateGiver(player) {
 		if (this._currentRoundGet().giver === null) {
 			this._currentRoundGet().giver = player;
-		} else if (player === this._currentRoundGet().giver) {
-			this._currentRoundGet().giver = null;
-			if (this._currentRoundGet().stage === this._stages.defining) {
-				this._roundNew();
-			}
-			for (const [player, details] of this._players) {
-				if (details.status === this._playerStatus.active) {
-					this._currentRoundGet().giver = player;
-					break;
-				}
-			}
-		};
+		}
 	}
 
 	_nextStage(player) {
 		const currentRound = this._currentRoundGet();
-		const activePlayerCount = [...this._players.values()].filter(data => {
-			return data.status === this._playerStatus.active;
-		}).length;
-		if (player !== currentRound.giver || activePlayerCount < 3) {
+		if (player !== currentRound.giver || this._players.size < 3) {
 			return false;
 		} else {
 			switch (currentRound.stage) {

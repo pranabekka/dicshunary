@@ -19,8 +19,6 @@ relies on being served to get server url and connect
 
 ### SOON
 
-[ ] remove leave/rejoin logic with active/inactive players
-    to focus on core logic before adding it in completely
 [ ] remove checks that will be upheld by clients
     and write them out as doc comments to refer to
 [ ] use event/message names for methods
