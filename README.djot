@@ -19,6 +19,14 @@ relies on being served to get server url and connect
 
 ### SOON
 
+[ ] remove leave/rejoin logic with active/inactive players
+    to focus on core logic before adding it in completely
+[ ] remove checks that will be upheld by clients
+    and write them out as doc comments to refer to
+[ ] use event/message names for methods
+    instead of instructions on what to do
+	such as giveWord instead of givingToGuessing
+[ ] return a list of actions for players from all the methods
 [ ] defining to voting
     all active must have submitted definitions to proceed
     must skip if giver goes inactive in voting
