@@ -19,8 +19,7 @@ relies on being served to get server url and connect
 
 ### SOON
 
-[ ] remove checks that will be upheld by clients
-    and write them out as doc comments to refer to
+[ ] create definitions map in the transition to defining
 [ ] use event/message names for methods
     instead of instructions on what to do
 	such as giveWord instead of givingToGuessing

@@ -3,28 +3,6 @@
 import { assert } from 'jsr:@std/assert';
 import { Game } from './game.mjs';
 
-Deno.test('enforce minimum active player count for switching stage', () => {
-	const game = new Game();
-	game._nextStage();
-
-	const expected = game._stages.giving;
-
-	const resultNoPlayers = game._currentRoundGet().stage;
-	assert(
-		resultNoPlayers === expected,
-		`game stage should be "${expected}" with 0 players. got "${resultNoPlayers}"`
-	);
-
-	const player1 = game.playerNew();
-	game._nextStage(player1);
-
-	const resultOnePlayer = game._currentRoundGet().stage;
-	assert(
-		resultOnePlayer === expected,
-		`game stage should be "${expected}" with 1 player (less than 3). got "${resultOnePlayer}"`
-	);
-});
-
 Deno.test('set first player as giver', () => {
 	const game = new Game();
 	const player = game.playerNew();
@@ -38,16 +16,16 @@ Deno.test('set first player as giver', () => {
 	);
 });
 
-Deno.test('switch stage if giver issues command', () => {
+Deno.test('switch stage', () => {
 	const game = new Game();
 
 	const expected = game._stages.defining;
 
-	const player1 = game.playerNew();
-	const _player2 = game.playerNew();
-	const _player3 = game.playerNew();
-	const _player4 = game.playerNew();
-	game.givingToGuessing(player1, 'eecksampul');
+	game.playerNew();
+	game.playerNew();
+	game.playerNew();
+	game.playerNew();
+	game.givingToGuessing('eecksampul');
 
 	const result = game._currentRoundGet().stage;
 	assert(
@@ -56,54 +34,20 @@ Deno.test('switch stage if giver issues command', () => {
 	);
 });
 
-Deno.test('do not switch stage if min players met but player not giver', () => {
-	const game = new Game();
-
-	const expected = game._stages.giving;
-
-	const _player1 = game.playerNew();
-	const player2 = game.playerNew();
-	const _player3 = game.playerNew();
-	const _player4 = game.playerNew();
-	game.givingToGuessing(player2, 'bad');
-
-	const result = game._currentRoundGet().stage;
-	assert(
-		result === expected,
-		`game stage should be "${expected}" if not giver. got "${result}"`
-	);
-});
-
-Deno.test('set word from giver in game', () => {
+Deno.test('set word when given', () => {
 	const expected = 'wurd';
 
 	const game = new Game();
-	const player1 = game.playerNew();
-	const _player2 = game.playerNew();
-	const _player3 = game.playerNew();
+	game.playerNew();
+	game.playerNew();
+	game.playerNew();
 	const word = expected;
-	game.givingToGuessing(player1, word);
+	game.givingToGuessing(word);
 
 	const result = game._currentRoundGet().word;
 	assert(
 		result === word,
-		`word should be "${word}" when sent by giver. got "${result}"`
-	);
-});
-
-Deno.test('do not set word if not giver', () => {
-	const expected = undefined;
-
-	const game = new Game();
-	const player1 = game.playerNew();
-	const player2 = game.playerNew();
-	const player3 = game.playerNew();
-	game.givingToGuessing(player2, 'notGiverI');
-
-	const resultNotGiver = game._currentRoundGet().word;
-	assert(
-		resultNotGiver === expected,
-		`word should be "${expected}" with non-giver. got "${resultNotGiver}"`
+		`word should be "${word}". got "${result}"`
 	);
 });
 
@@ -114,7 +58,7 @@ Deno.test('save player definitions to round', () => {
 	const player1 = game.playerNew();
 	const player2 = game.playerNew();
 	const player3 = game.playerNew();
-	game.givingToGuessing(player1, 'thingummy');
+	game.givingToGuessing('thingummy');
 	const definition1 = 'the correct definition';
 	const definition2 = 'a made up definition';
 	const definition3 = 'also a made up definition';

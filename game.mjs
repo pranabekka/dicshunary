@@ -39,12 +39,11 @@ export class Game {
 		return player;
 	}
 
-	givingToGuessing(player, word) {
-		const progress = this._nextStage(player);
-		if (progress === true) {
-			const currentRound = this._currentRoundGet();
-			currentRound.word = word;
-		}
+	// only giver will issue this command
+	// only when there are enough players
+	givingToGuessing(word) {
+		const progress = this._nextStage();
+		this._currentRoundGet().word = word;
 	}
 
 	definitionSubmit(player, definition) {
@@ -61,25 +60,21 @@ export class Game {
 		}
 	}
 
-	_nextStage(player) {
+	_nextStage() {
 		const currentRound = this._currentRoundGet();
-		if (player !== currentRound.giver || this._players.size < 3) {
-			return false;
-		} else {
-			switch (currentRound.stage) {
-				case this._stages.giving:
-					currentRound.stage = this._stages.defining;
-					return true;
-				case this._stages.defining:
-					currentRound.stage = this._stages.voting;
-					return true;
-				case this._stages.voting:
-					currentRound.stage = this._stages.scoring;
-					return true;
-				case this._stages.scoring:
-					currentRound.stage = this._stages.giving;
-					return true;
-			}
+		switch (currentRound.stage) {
+			case this._stages.giving:
+				currentRound.stage = this._stages.defining;
+				break;
+			case this._stages.defining:
+				currentRound.stage = this._stages.voting;
+				break;
+			case this._stages.voting:
+				currentRound.stage = this._stages.scoring;
+				break;
+			case this._stages.scoring:
+				currentRound.stage = this._stages.giving;
+				break;
 		}
 	}
 
