@@ -5,7 +5,7 @@ import { Game } from './game.mjs';
 
 Deno.test('set first player as giver', () => {
 	const game = new Game();
-	const player = game.playerNew();
+	const player = game.playerJoin();
 
 	const expected = player;
 
@@ -21,11 +21,11 @@ Deno.test('switch stage', () => {
 
 	const expected = game._stages.defining;
 
-	game.playerNew();
-	game.playerNew();
-	game.playerNew();
-	game.playerNew();
-	game.givingToGuessing('eecksampul');
+	game.playerJoin();
+	game.playerJoin();
+	game.playerJoin();
+	game.playerJoin();
+	game.wordGive('eecksampul');
 
 	const result = game._currentRoundGet().stage;
 	assert(
@@ -38,11 +38,11 @@ Deno.test('set word when given', () => {
 	const expected = 'wurd';
 
 	const game = new Game();
-	game.playerNew();
-	game.playerNew();
-	game.playerNew();
+	game.playerJoin();
+	game.playerJoin();
+	game.playerJoin();
 	const word = expected;
-	game.givingToGuessing(word);
+	game.wordGive(word);
 
 	const result = game._currentRoundGet().word;
 	assert(
@@ -55,16 +55,16 @@ Deno.test('set word when given', () => {
 // i'm comparing objects as maps by JSON string representation
 Deno.test('save player definitions to round', () => {
 	const game = new Game();
-	const player1 = game.playerNew();
-	const player2 = game.playerNew();
-	const player3 = game.playerNew();
-	game.givingToGuessing('thingummy');
+	const player1 = game.playerJoin();
+	const player2 = game.playerJoin();
+	const player3 = game.playerJoin();
+	game.wordGive('thingummy');
 	const definition1 = 'the correct definition';
 	const definition2 = 'a made up definition';
 	const definition3 = 'also a made up definition';
-	game.definitionSubmit(player1, definition1);
-	game.definitionSubmit(player2, definition2);
-	game.definitionSubmit(player3, definition3);
+	game.definitionGive(player1, definition1);
+	game.definitionGive(player2, definition2);
+	game.definitionGive(player3, definition3);
 
 	const expected = JSON.stringify({
 		[player1]: definition1,
@@ -80,12 +80,12 @@ Deno.test('save player definitions to round', () => {
 });
 
 // Deno.test('-TEMPLATE-', () => {
-// 	const expected = ;
+// 	const expected = -;
 //
 // 	const game = new Game();
-// 	const player = game.playerNew();
+// 	const player = game.playerJoin();
 //
-// 	const result = ;
+// 	const result = -;
 // 	assert(
 // 		result === expected,
 // 		`expected ${expected}. got ${result}`

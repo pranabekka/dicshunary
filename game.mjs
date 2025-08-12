@@ -31,8 +31,7 @@ export class Game {
 		this._roundNew();
 	}
 
-	// also adds player as new joinee
-	playerNew() {
+	playerJoin() {
 		const player = 'player-' + crypto.randomUUID();
 		this._players.set(player, { score: 0 });
 		this._updateGiver(player);
@@ -41,13 +40,13 @@ export class Game {
 
 	// only giver will issue this command
 	// only when there are enough players
-	givingToGuessing(word) {
+	wordGive(word) {
 		const progress = this._nextStage();
 		this._currentRoundGet().word = word;
 		this._currentRoundGet().definitions = {};
 	}
 
-	definitionSubmit(player, definition) {
+	definitionGive(player, definition) {
 		this._currentRoundGet().definitions[player] = definition;
 	}
 

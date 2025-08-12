@@ -19,9 +19,6 @@ relies on being served to get server url and connect
 
 ### SOON
 
-[ ] use event/message names for methods
-    instead of instructions on what to do
-	such as giveWord instead of givingToGuessing
 [ ] return a list of actions for players from all the methods
 [ ] defining to voting
     all active must have submitted definitions to proceed
