@@ -5,7 +5,8 @@ import { Game } from './game.mjs';
 
 Deno.test('set first player as giver', () => {
 	const game = new Game();
-	const player = game.playerJoin();
+	game.playerJoin();
+	const player = game._players.keys().toArray()[0];
 
 	const expected = player;
 
@@ -55,9 +56,10 @@ Deno.test('set word when given', () => {
 // i'm comparing objects as maps by JSON string representation
 Deno.test('save player definitions to round', () => {
 	const game = new Game();
-	const player1 = game.playerJoin();
-	const player2 = game.playerJoin();
-	const player3 = game.playerJoin();
+	game.playerJoin();
+	game.playerJoin();
+	game.playerJoin();
+	const [player1, player2, player3] = game._players.keys().toArray();
 	game.wordGive('thingummy');
 	const definition1 = 'the correct definition';
 	const definition2 = 'a made up definition';
@@ -83,7 +85,8 @@ Deno.test('save player definitions to round', () => {
 // 	const expected = -;
 //
 // 	const game = new Game();
-// 	const player = game.playerJoin();
+//
+// 	game.playerJoin();
 //
 // 	const result = -;
 // 	assert(

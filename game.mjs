@@ -35,7 +35,6 @@ export class Game {
 		const player = 'player-' + crypto.randomUUID();
 		this._players.set(player, { score: 0 });
 		this._updateGiver(player);
-		return player;
 	}
 
 	// only giver will issue this command
