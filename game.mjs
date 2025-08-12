@@ -44,14 +44,11 @@ export class Game {
 	givingToGuessing(word) {
 		const progress = this._nextStage();
 		this._currentRoundGet().word = word;
+		this._currentRoundGet().definitions = {};
 	}
 
 	definitionSubmit(player, definition) {
-		const currentRound = this._currentRoundGet();
-		if (currentRound.definitions === undefined) {
-			currentRound.definitions = {};
-		}
-		currentRound.definitions[player] = definition;
+		this._currentRoundGet().definitions[player] = definition;
 	}
 
 	_updateGiver(player) {

@@ -19,7 +19,6 @@ relies on being served to get server url and connect
 
 ### SOON
 
-[ ] create definitions map in the transition to defining
 [ ] use event/message names for methods
     instead of instructions on what to do
 	such as giveWord instead of givingToGuessing
