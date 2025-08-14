@@ -55,7 +55,12 @@ export class Game {
 		const playerCount = Object.keys(this._players).length;
 		if (definitionCount === playerCount) {
 			this._nextStage();
+			this._currentRoundGet().votes = {}
 		}
+	}
+
+	voteGive(voter, voted) {
+		this._currentRoundGet().votes[voter] = voted;
 	}
 
 	_updateGiver(player) {

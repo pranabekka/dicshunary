@@ -102,6 +102,29 @@ Deno.test('switch stage to voting when all players give definition', () => {
 	);
 });
 
+Deno.test('save votes to round', () => {
+	const game = new Game();
+
+	game.playerJoin();
+	game.playerJoin();
+	game.playerJoin();
+	game.wordGive('word');
+	const [player1, player2, player3] = Object.keys(game._players);
+	game.definitionGive(player1, 'a definition');
+	game.definitionGive(player2, 'a definition');
+	game.definitionGive(player3, 'a definition');
+	game.voteGive(player2, player3);
+	game.voteGive(player3, player2);
+
+	const expected = 2;
+
+	const result = Object.keys(game._currentRoundGet().votes).length;
+	assert(
+		result === expected,
+		`expected ${expected} votes. got ${result}`
+	);
+});
+
 // Deno.test('-TEMPLATE-', () => {
 // 	const expected = -;
 //
