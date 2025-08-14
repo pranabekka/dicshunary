@@ -8,7 +8,7 @@ export class Game {
 	// 		score: Number,
 	// 	>
 	// >
-	_players = new Map();
+	_players = {};
 	_stages = {
 		giving: 'giving-a204b75',
 		defining: 'defining-ed84077',
@@ -33,7 +33,7 @@ export class Game {
 
 	playerJoin() {
 		const player = 'player-' + crypto.randomUUID();
-		this._players.set(player, { score: 0 });
+		this._players[player] = { score: 0 };
 		this._updateGiver(player);
 	}
 

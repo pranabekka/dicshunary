@@ -6,7 +6,7 @@ import { Game } from './game.mjs';
 Deno.test('set first player as giver', () => {
 	const game = new Game();
 	game.playerJoin();
-	const player = game._players.keys().toArray()[0];
+	const player = Object.keys(game._players)[0];
 
 	const expected = player;
 
@@ -59,7 +59,7 @@ Deno.test('save player definitions to round', () => {
 	game.playerJoin();
 	game.playerJoin();
 	game.playerJoin();
-	const [player1, player2, player3] = game._players.keys().toArray();
+	const [player1, player2, player3] = Object.keys(game._players);
 	game.wordGive('thingummy');
 	const definition1 = 'the correct definition';
 	const definition2 = 'a made up definition';
