@@ -22,7 +22,9 @@ export class Game {
 	// 		giver: Giver,
 	// 		stage: Stage,
 	// 		word: String,
-	// 		definitions: Map<Player, String>
+	// 		definitions: List<
+	// 			Struct<author: Player, body: String>
+	// 		>,
 	// 	>
 	// >
 	_rounds = [];
@@ -42,14 +44,14 @@ export class Game {
 	wordGive(word) {
 		const progress = this._nextStage();
 		this._currentRoundGet().word = word;
-		this._currentRoundGet().definitions = {};
+		this._currentRoundGet().definitions = [];
 	}
 
 	definitionGive(player, definition) {
 		const definitions = this._currentRoundGet().definitions;
-		definitions[player] = definition;
+		definitions.push({author: player, body: definition});
 
-		const definitionCount = Object.keys(definitions).length;
+		const definitionCount = definitions.length;
 		const playerCount = Object.keys(this._players).length;
 		if (definitionCount === playerCount) {
 			this._nextStage();

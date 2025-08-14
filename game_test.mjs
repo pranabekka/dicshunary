@@ -68,11 +68,11 @@ Deno.test('save player definitions to round', () => {
 	game.definitionGive(player2, definition2);
 	game.definitionGive(player3, definition3);
 
-	const expected = JSON.stringify({
-		[player1]: definition1,
-		[player2]: definition2,
-		[player3]: definition3,
-	});
+	const expected = JSON.stringify([
+		{ author: player1, body: definition1 },
+		{ author: player2, body: definition2 },
+		{ author: player3, body: definition3 },
+	]);
 
 	const result = JSON.stringify(game._currentRoundGet().definitions);
 	assert(
