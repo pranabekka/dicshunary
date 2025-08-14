@@ -46,7 +46,14 @@ export class Game {
 	}
 
 	definitionGive(player, definition) {
-		this._currentRoundGet().definitions[player] = definition;
+		const definitions = this._currentRoundGet().definitions;
+		definitions[player] = definition;
+
+		const definitionCount = Object.keys(definitions).length;
+		const playerCount = Object.keys(this._players).length;
+		if (definitionCount === playerCount) {
+			this._nextStage();
+		}
 	}
 
 	_updateGiver(player) {

@@ -17,7 +17,7 @@ Deno.test('set first player as giver', () => {
 	);
 });
 
-Deno.test('switch stage', () => {
+Deno.test('switch stage to defining when word is given', () => {
 	const game = new Game();
 
 	const expected = game._stages.defining;
@@ -78,6 +78,27 @@ Deno.test('save player definitions to round', () => {
 	assert(
 		result === expected,
 		`expected ${expected} for definition submissions. got ${result}`
+	);
+});
+
+Deno.test('switch stage to voting when all players give definition', () => {
+	const game = new Game();
+
+	const expected = game._stages.voting;
+
+	game.playerJoin();
+	game.playerJoin();
+	game.playerJoin();
+	game.wordGive('word');
+	const [player1, player2, player3] = Object.keys(game._players);
+	game.definitionGive(player1, 'a definition');
+	game.definitionGive(player2, 'a definition');
+	game.definitionGive(player3, 'a definition');
+
+	const result = game._currentRoundGet().stage;
+	assert(
+		result === expected,
+		`expected stage ${expected}. got ${result}`
 	);
 });
 
