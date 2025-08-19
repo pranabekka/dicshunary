@@ -125,6 +125,29 @@ Deno.test('save votes to round', () => {
 	);
 });
 
+Deno.test('switch stage to scoring when all guessers vote', () => {
+	const game = new Game();
+
+	const expected = game._stages.scoring;
+
+	game.playerJoin();
+	game.playerJoin();
+	game.playerJoin();
+	game.wordGive('word');
+	const [player1, player2, player3] = Object.keys(game._players);
+	game.definitionGive(player1, 'a definition');
+	game.definitionGive(player2, 'a definition');
+	game.definitionGive(player3, 'a definition');
+	game.voteGive(player2, player3);
+	game.voteGive(player3, player2);
+
+	const result = game._currentRoundGet().stage;
+	assert(
+		result === expected,
+		`expected stage to be ${expected}. got ${result}`
+	);
+});
+
 // Deno.test('-TEMPLATE-', () => {
 // 	const expected = -;
 //
