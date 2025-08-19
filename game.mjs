@@ -42,8 +42,8 @@ export class Game {
 	// only giver will issue this command
 	// only when there are enough players
 	wordGive(word) {
-		const progress = this._nextStage();
 		this._currentRoundGet().word = word;
+		this._currentRoundGet().stage = this._stages.defining;
 		this._currentRoundGet().definitions = [];
 	}
 
@@ -54,7 +54,7 @@ export class Game {
 		const definitionCount = definitions.length;
 		const playerCount = Object.keys(this._players).length;
 		if (definitionCount === playerCount) {
-			this._nextStage();
+			this._currentRoundGet().stage = this._stages.voting;
 			this._currentRoundGet().votes = {}
 		}
 	}
@@ -65,31 +65,13 @@ export class Game {
 		const voteCount = Object.keys(this._currentRoundGet().votes).length;
 		const playerCount = Object.keys(this._players).length;
 		if (voteCount === playerCount - 1) {
-			this._nextStage();
+			this._currentRoundGet().stage = this._stages.scoring;
 		}
 	}
 
 	_updateGiver(player) {
 		if (this._currentRoundGet().giver === null) {
 			this._currentRoundGet().giver = player;
-		}
-	}
-
-	_nextStage() {
-		const currentRound = this._currentRoundGet();
-		switch (currentRound.stage) {
-			case this._stages.giving:
-				currentRound.stage = this._stages.defining;
-				break;
-			case this._stages.defining:
-				currentRound.stage = this._stages.voting;
-				break;
-			case this._stages.voting:
-				currentRound.stage = this._stages.scoring;
-				break;
-			case this._stages.scoring:
-				currentRound.stage = this._stages.giving;
-				break;
 		}
 	}
 
