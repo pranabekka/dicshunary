@@ -65,7 +65,33 @@ export class Game {
 		const voteCount = Object.keys(this._currentRoundGet().votes).length;
 		const playerCount = Object.keys(this._players).length;
 		if (voteCount === playerCount - 1) {
+			this._scoresCalculate();
 			this._currentRoundGet().stage = this._stages.scoring;
+		}
+	}
+
+	_scoresCalculate() {
+		// points the giver gets for each wrong guess
+		const giverPoints = 2;
+		// points the definers gets when voted for
+		const definerPoints = 1;
+		// points the guessers get for correct guess
+		const guesserPoints = 2;
+
+		const round = this._currentRoundGet();
+		round.scores = {};
+		for (const player in this._players) {
+			round.scores[player] = 0;
+		}
+
+		for (const voter in round.votes) {
+			const voted = round.votes[voter];
+			if (voted === round.giver) {
+				round.scores[voter] += guesserPoints;
+			} else {
+				round.scores[round.giver] += giverPoints;
+				round.scores[voted] += definerPoints;
+			}
 		}
 	}
 

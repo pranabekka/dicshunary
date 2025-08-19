@@ -148,6 +148,37 @@ Deno.test('switch stage to scoring when all guessers vote', () => {
 	);
 });
 
+Deno.test('calculate scores after voting', () => {
+	const game = new Game();
+
+	game.playerJoin();
+	game.playerJoin();
+	game.playerJoin();
+	game.wordGive('word');
+	const [player1, player2, player3] = Object.keys(game._players);
+	game.definitionGive(player1, 'a definition');
+	game.definitionGive(player2, 'a definition');
+	game.definitionGive(player3, 'a definition');
+	game.voteGive(player2, player1);
+	game.voteGive(player3, player2);
+
+	// p1, giver, should get 2 from miss by p3
+	// p2, guesser, should get 2 for guessing right for p1
+	// p2, guesser, should get 1 for being guessed by p3
+	// p3, guesser, should get 0 for guessing wrong
+	const expected = JSON.stringify({
+		[player1]: 2,
+		[player2]: 3,
+		[player3]: 0,
+	});
+
+	const result = JSON.stringify(game._currentRoundGet().scores);
+	assert(
+		result === expected,
+		`expected scores of ${expected}. got ${result}`
+	);
+});
+
 // Deno.test('-TEMPLATE-', () => {
 // 	const expected = -;
 //
