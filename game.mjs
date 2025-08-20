@@ -70,6 +70,20 @@ export class Game {
 		}
 	}
 
+	roundComplete() {
+		let nextGiver;
+		const players = Object.keys(this._players);
+		const giverIdx = players.indexOf(this._currentRoundGet().giver)
+		if (giverIdx === players.length - 1) {
+			nextGiver = players[0];
+		} else {
+			nextGiver = players[giverIdx + 1];
+		}
+
+		this._roundNew();
+		this._currentRoundGet().giver = nextGiver;
+	}
+
 	_scoresCalculate() {
 		// points the giver gets for each wrong guess
 		const giverPoints = 2;

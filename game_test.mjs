@@ -179,6 +179,91 @@ Deno.test('calculate scores after voting', () => {
 	);
 });
 
+Deno.test('create new round after completing', () => {
+	const game = new Game();
+
+	game.playerJoin();
+	game.playerJoin();
+	game.playerJoin();
+	game.wordGive('word');
+	const [player1, player2, player3] = Object.keys(game._players);
+	game.definitionGive(player1, 'a definition');
+	game.definitionGive(player2, 'a definition');
+	game.definitionGive(player3, 'a definition');
+	game.voteGive(player2, player1);
+	game.voteGive(player3, player2);
+	game.roundComplete();
+
+	const expected = 2;
+
+	const result = game._rounds.length;
+	assert(
+		result === expected,
+		`expected to be on round ${expected}. got ${result}`
+	);
+});
+
+Deno.test('change giver for new round', () => {
+	const game = new Game();
+
+	game.playerJoin();
+	game.playerJoin();
+	game.playerJoin();
+	game.wordGive('word');
+	const [player1, player2, player3] = Object.keys(game._players);
+	game.definitionGive(player1, 'a definition');
+	game.definitionGive(player2, 'a definition');
+	game.definitionGive(player3, 'a definition');
+	game.voteGive(player2, player1);
+	game.voteGive(player3, player2);
+	game.roundComplete();
+
+	const expected = player2;
+
+	const result = game._currentRoundGet().giver;
+	assert(
+		result === expected,
+		`expected giver to be ${expected}. got ${result}`
+	);
+});
+
+Deno.test('change giver to first player after set', () => {
+	const game = new Game();
+	game.playerJoin();
+	game.playerJoin();
+	game.playerJoin();
+	game.wordGive('word');
+	const [player1, player2, player3] = Object.keys(game._players);
+	game.definitionGive(player1, 'a definition');
+	game.definitionGive(player2, 'a definition');
+	game.definitionGive(player3, 'a definition');
+	game.voteGive(player2, player1);
+	game.voteGive(player3, player2);
+	game.roundComplete();
+	game.wordGive('word2');
+	game.definitionGive(player1, 'a definition');
+	game.definitionGive(player2, 'a definition');
+	game.definitionGive(player3, 'a definition');
+	game.voteGive(player1, player2);
+	game.voteGive(player3, player2);
+	game.roundComplete();
+	game.wordGive('word3');
+	game.definitionGive(player1, 'a definition');
+	game.definitionGive(player2, 'a definition');
+	game.definitionGive(player3, 'a definition');
+	game.voteGive(player1, player2);
+	game.voteGive(player2, player3);
+	game.roundComplete();
+
+	const expected = player1;
+
+	const result = game._currentRoundGet().giver;
+	assert(
+		result === expected,
+		`expected giver to be ${expected}. got ${result}`
+	);
+});
+
 // Deno.test('-TEMPLATE-', () => {
 // 	const expected = -;
 //
