@@ -19,40 +19,23 @@ relies on being served to get server url and connect
 
 ### SOON
 
-[ ] return a list of actions for players from all the methods
-[ ] voting to scoring
-    all active must have voted to proceed
-    save scores even if giver leaves
-    maybe give scores to next giver to read
-[ ] give round score
-    per player name, definition, voted by, voted for,
-    if giver, if voted for giver
+[ ] scoring to giving, new round
+    switch giver
 [ ] give game score
     table of name, total, rounds
     star in round if giver that round
-[ ] scoring to giving
-    switch giver
-    show scores
+[ ] handle joining at any time
+	put on wait queue if stage is voting
+[ ] handle leaving
+[ ] handle rejoining
+[ ] manage players as objects passed into game
+    based on a general player interface/class
+    so i can swap out implementation for networking
 
 ### LATER
 
-[ ] split out player into seperate object as actor
-    with methods as messages
-    and references as ids
-    in preparation for networking
-    see notes for more details
-[ ] insert checks in Game for false rejoin/leave signals
-    just in case?
-    test this as well
-[ ] game management vs player management split
-    player management is names and network addresses
-    and waiting players
+[ ] add name to players
+[ ] add networking to players
 [ ] version server and clients
     // print before anything else
-[ ] waiting queue for join/reconnect during reading/voting
-    use playersPlaying + playersGone + playersWaiting
-    for player management
 [ ] main client: views, verification, and test-client logic
-[ ] change playerNew to playerJoin
-    and merge functionality with rejoin
-    maybe not?
