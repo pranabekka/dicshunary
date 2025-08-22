@@ -264,6 +264,33 @@ Deno.test('change giver to first player after set', () => {
 	);
 });
 
+Deno.test('add round scores to total game scores', () => {
+	const game = new Game();
+	game.playerJoin();
+	game.playerJoin();
+	game.playerJoin();
+	game.wordGive('word');
+	const [player1, player2, player3] = Object.keys(game._players);
+	game.definitionGive(player1, 'a definition');
+	game.definitionGive(player2, 'a definition');
+	game.definitionGive(player3, 'a definition');
+	game.voteGive(player2, player1);
+	game.voteGive(player3, player2);
+	game.roundComplete();
+
+	const expected = JSON.stringify({
+		[player1]: {score: 2},
+		[player2]: {score: 3},
+		[player3]: {score: 0},
+	});
+
+	const result = JSON.stringify(game._players);
+	assert(
+		result === expected,
+		`expected scores of ${expected}. got ${result}`
+	);
+});
+
 // Deno.test('-TEMPLATE-', () => {
 // 	const expected = -;
 //

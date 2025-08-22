@@ -19,9 +19,6 @@ relies on being served to get server url and connect
 
 ### SOON
 
-[ ] give game score
-    table of name, total, rounds
-    star in round if giver that round
 [ ] handle joining at any time
 	put on wait queue if stage is voting
 [ ] handle leaving
@@ -37,3 +34,6 @@ relies on being served to get server url and connect
 [ ] version server and clients
     // print before anything else
 [ ] main client: views, verification, and test-client logic
+[ ] construct game score view
+    table of name, total, rounds
+    star in round if giver that round

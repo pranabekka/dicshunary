@@ -71,6 +71,10 @@ export class Game {
 	}
 
 	roundComplete() {
+		for (const player in this._players) {
+			this._players[player].score += this._currentRoundGet().scores[player];
+		}
+
 		let nextGiver;
 		const players = Object.keys(this._players);
 		const giverIdx = players.indexOf(this._currentRoundGet().giver)
