@@ -19,7 +19,7 @@ relies on being served to get server url and connect
 
 ### SOON
 
-[ ] handle joining at any time
+[!] handle joining at any time
 	put on wait queue if stage is voting
 [ ] handle leaving
 [ ] handle rejoining

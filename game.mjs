@@ -36,6 +36,7 @@ export class Game {
 	playerJoin() {
 		const player = 'player-' + crypto.randomUUID();
 		this._players[player] = { score: 0 };
+		this._currentRoundGet().players[player] = { score: 0 };
 		this._updateGiver(player);
 	}
 
@@ -52,7 +53,7 @@ export class Game {
 		definitions.push({author: player, body: definition});
 
 		const definitionCount = definitions.length;
-		const playerCount = Object.keys(this._players).length;
+		const playerCount = Object.keys(this._currentRoundGet().players).length;
 		if (definitionCount === playerCount) {
 			this._currentRoundGet().stage = this._stages.voting;
 			this._currentRoundGet().votes = {}
@@ -63,7 +64,7 @@ export class Game {
 		this._currentRoundGet().votes[voter] = voted;
 
 		const voteCount = Object.keys(this._currentRoundGet().votes).length;
-		const playerCount = Object.keys(this._players).length;
+		const playerCount = Object.keys(this._currentRoundGet().players).length;
 		if (voteCount === playerCount - 1) {
 			this._scoresCalculate();
 			this._currentRoundGet().stage = this._stages.scoring;
@@ -71,7 +72,7 @@ export class Game {
 	}
 
 	roundComplete() {
-		for (const player in this._players) {
+		for (const player in this._currentRoundGet().players) {
 			this._players[player].score += this._currentRoundGet().scores[player];
 		}
 
@@ -86,6 +87,7 @@ export class Game {
 
 		this._roundNew();
 		this._currentRoundGet().giver = nextGiver;
+		this._currentRoundGet().players = this._players;
 	}
 
 	_scoresCalculate() {
@@ -98,7 +100,7 @@ export class Game {
 
 		const round = this._currentRoundGet();
 		round.scores = {};
-		for (const player in this._players) {
+		for (const player in round.players) {
 			round.scores[player] = 0;
 		}
 
@@ -125,7 +127,7 @@ export class Game {
 
 	_roundNew() {
 		this._rounds.push(
-			{ giver: null, stage: this._stages.giving }
+			{ giver: null, stage: this._stages.giving, players: {} }
 		);
 	}
 }

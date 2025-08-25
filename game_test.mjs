@@ -6,7 +6,7 @@ import { Game } from './game.mjs';
 Deno.test('set first player as giver', () => {
 	const game = new Game();
 	game.playerJoin();
-	const player = Object.keys(game._players)[0];
+	const player = Object.keys(game._currentRoundGet().players)[0];
 
 	const expected = player;
 
@@ -59,7 +59,7 @@ Deno.test('save player definitions to round', () => {
 	game.playerJoin();
 	game.playerJoin();
 	game.playerJoin();
-	const [player1, player2, player3] = Object.keys(game._players);
+	const [player1, player2, player3] = Object.keys(game._currentRoundGet().players);
 	game.wordGive('thingummy');
 	const definition1 = 'the correct definition';
 	const definition2 = 'a made up definition';
@@ -90,7 +90,7 @@ Deno.test('switch stage to voting when all players give definition', () => {
 	game.playerJoin();
 	game.playerJoin();
 	game.wordGive('word');
-	const [player1, player2, player3] = Object.keys(game._players);
+	const [player1, player2, player3] = Object.keys(game._currentRoundGet().players);
 	game.definitionGive(player1, 'a definition');
 	game.definitionGive(player2, 'a definition');
 	game.definitionGive(player3, 'a definition');
@@ -109,7 +109,7 @@ Deno.test('save votes to round', () => {
 	game.playerJoin();
 	game.playerJoin();
 	game.wordGive('word');
-	const [player1, player2, player3] = Object.keys(game._players);
+	const [player1, player2, player3] = Object.keys(game._currentRoundGet().players);
 	game.definitionGive(player1, 'a definition');
 	game.definitionGive(player2, 'a definition');
 	game.definitionGive(player3, 'a definition');
@@ -134,7 +134,7 @@ Deno.test('switch stage to scoring when all guessers vote', () => {
 	game.playerJoin();
 	game.playerJoin();
 	game.wordGive('word');
-	const [player1, player2, player3] = Object.keys(game._players);
+	const [player1, player2, player3] = Object.keys(game._currentRoundGet().players);
 	game.definitionGive(player1, 'a definition');
 	game.definitionGive(player2, 'a definition');
 	game.definitionGive(player3, 'a definition');
@@ -155,7 +155,7 @@ Deno.test('calculate scores after voting', () => {
 	game.playerJoin();
 	game.playerJoin();
 	game.wordGive('word');
-	const [player1, player2, player3] = Object.keys(game._players);
+	const [player1, player2, player3] = Object.keys(game._currentRoundGet().players);
 	game.definitionGive(player1, 'a definition');
 	game.definitionGive(player2, 'a definition');
 	game.definitionGive(player3, 'a definition');
@@ -186,7 +186,7 @@ Deno.test('create new round after completing', () => {
 	game.playerJoin();
 	game.playerJoin();
 	game.wordGive('word');
-	const [player1, player2, player3] = Object.keys(game._players);
+	const [player1, player2, player3] = Object.keys(game._currentRoundGet().players);
 	game.definitionGive(player1, 'a definition');
 	game.definitionGive(player2, 'a definition');
 	game.definitionGive(player3, 'a definition');
@@ -210,7 +210,7 @@ Deno.test('change giver for new round', () => {
 	game.playerJoin();
 	game.playerJoin();
 	game.wordGive('word');
-	const [player1, player2, player3] = Object.keys(game._players);
+	const [player1, player2, player3] = Object.keys(game._currentRoundGet().players);
 	game.definitionGive(player1, 'a definition');
 	game.definitionGive(player2, 'a definition');
 	game.definitionGive(player3, 'a definition');
@@ -233,7 +233,7 @@ Deno.test('change giver to first player after set', () => {
 	game.playerJoin();
 	game.playerJoin();
 	game.wordGive('word');
-	const [player1, player2, player3] = Object.keys(game._players);
+	const [player1, player2, player3] = Object.keys(game._currentRoundGet().players);
 	game.definitionGive(player1, 'a definition');
 	game.definitionGive(player2, 'a definition');
 	game.definitionGive(player3, 'a definition');
@@ -270,7 +270,7 @@ Deno.test('add round scores to total game scores', () => {
 	game.playerJoin();
 	game.playerJoin();
 	game.wordGive('word');
-	const [player1, player2, player3] = Object.keys(game._players);
+	const [player1, player2, player3] = Object.keys(game._currentRoundGet().players);
 	game.definitionGive(player1, 'a definition');
 	game.definitionGive(player2, 'a definition');
 	game.definitionGive(player3, 'a definition');
