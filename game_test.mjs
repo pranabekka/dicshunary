@@ -291,6 +291,44 @@ Deno.test('add round scores to total game scores', () => {
 	);
 });
 
+Deno.test('allow players to join round while defining', () => {
+	const game = new Game();
+	game.playerJoin();
+	game.playerJoin();
+	game.playerJoin();
+	game.wordGive('quick');
+	game.playerJoin();
+
+	const expected = 4;
+
+	const result = Object.keys(game._currentRoundGet().players).length;
+	assert(
+		result === expected,
+		`expected ${expected} players in round. got ${result}`
+	);
+});
+
+Deno.test('do not add players to round after defining', () => {
+	const game = new Game();
+	game.playerJoin();
+	game.playerJoin();
+	game.playerJoin();
+	game.wordGive('word');
+	const [player1, player2, player3] = Object.keys(game._currentRoundGet().players);
+	game.definitionGive(player1, 'a definition');
+	game.definitionGive(player2, 'a definition');
+	game.definitionGive(player3, 'a definition');
+	game.playerJoin();
+
+	const expected = 3;
+
+	const result = Object.keys(game._currentRoundGet().players).length;
+	assert(
+		result === expected,
+		`expected ${expected} players in round. got ${result}`
+	);
+});
+
 // Deno.test('-TEMPLATE-', () => {
 // 	const expected = -;
 //

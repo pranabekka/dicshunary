@@ -36,8 +36,15 @@ export class Game {
 	playerJoin() {
 		const player = 'player-' + crypto.randomUUID();
 		this._players[player] = { score: 0 };
-		this._currentRoundGet().players[player] = { score: 0 };
-		this._updateGiver(player);
+
+		const round = this._currentRoundGet();
+		if (
+			round.stage === this._stages.giving
+			|| round.stage === this._stages.defining
+		) {
+			this._currentRoundGet().players[player] = { score: 0 };
+			this._updateGiver(player);
+		}
 	}
 
 	// only giver will issue this command
