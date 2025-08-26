@@ -94,7 +94,9 @@ export class Game {
 
 		this._roundNew();
 		this._currentRoundGet().giver = nextGiver;
-		this._currentRoundGet().players = this._players;
+		for (const player in this._players) {
+			this._currentRoundGet().players[player] = {};
+		}
 	}
 
 	_scoresCalculate() {
