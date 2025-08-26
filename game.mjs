@@ -52,25 +52,30 @@ export class Game {
 	wordGive(word) {
 		this._currentRoundGet().word = word;
 		this._currentRoundGet().stage = this._stages.defining;
-		this._currentRoundGet().definitions = [];
 	}
 
 	definitionGive(player, definition) {
-		const definitions = this._currentRoundGet().definitions;
-		definitions.push({author: player, body: definition});
+		const players = this._currentRoundGet().players;
 
-		const definitionCount = definitions.length;
-		const playerCount = Object.keys(this._currentRoundGet().players).length;
+		players[player].definition = definition;
+
+		const definitionCount = Object.keys(players)
+			.filter(p => typeof(players[p].definition) === "string")
+			.length;
+		const playerCount = Object.keys(players).length;
 		if (definitionCount === playerCount) {
 			this._currentRoundGet().stage = this._stages.voting;
-			this._currentRoundGet().votes = {}
 		}
 	}
 
 	voteGive(voter, voted) {
-		this._currentRoundGet().votes[voter] = voted;
+		const players = this._currentRoundGet().players;
 
-		const voteCount = Object.keys(this._currentRoundGet().votes).length;
+		players[voter].vote = voted;
+
+		const voteCount = Object.keys(players)
+			.filter(p => typeof(players[p].vote) === "string")
+			.length;
 		const playerCount = Object.keys(this._currentRoundGet().players).length;
 		if (voteCount === playerCount - 1) {
 			this._scoresCalculate();
@@ -80,7 +85,7 @@ export class Game {
 
 	roundComplete() {
 		for (const player in this._currentRoundGet().players) {
-			this._players[player].score += this._currentRoundGet().scores[player];
+			this._players[player].score += this._currentRoundGet().players[player].score;
 		}
 
 		let nextGiver;
@@ -108,18 +113,20 @@ export class Game {
 		const guesserPoints = 2;
 
 		const round = this._currentRoundGet();
-		round.scores = {};
+
 		for (const player in round.players) {
-			round.scores[player] = 0;
+			round.players[player].score = 0;
 		}
 
-		for (const voter in round.votes) {
-			const voted = round.votes[voter];
+		for (const player in round.players) {
+			if (player === round.giver) { continue; }
+
+			const voted = round.players[player].vote;
 			if (voted === round.giver) {
-				round.scores[voter] += guesserPoints;
+				round.players[player].score += guesserPoints;
 			} else {
-				round.scores[round.giver] += giverPoints;
-				round.scores[voted] += definerPoints;
+				round.players[round.giver].score += giverPoints;
+				round.players[voted].score += definerPoints;
 			}
 		}
 	}

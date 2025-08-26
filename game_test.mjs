@@ -68,13 +68,18 @@ Deno.test('save player definitions to round', () => {
 	game.definitionGive(player2, definition2);
 	game.definitionGive(player3, definition3);
 
-	const expected = JSON.stringify([
-		{ author: player1, body: definition1 },
-		{ author: player2, body: definition2 },
-		{ author: player3, body: definition3 },
-	]);
+	const expected = JSON.stringify({
+		[player1]: definition1,
+		[player2]: definition2,
+		[player3]: definition3,
+	});
 
-	const result = JSON.stringify(game._currentRoundGet().definitions);
+	const result = JSON.stringify(
+		Object.fromEntries(
+			Object.entries(game._currentRoundGet().players)
+				.map(p => [ p[0], p[1].definition ])
+		)
+	);
 	assert(
 		result === expected,
 		`expected ${expected} for definition submissions. got ${result}`
@@ -118,7 +123,10 @@ Deno.test('save votes to round', () => {
 
 	const expected = 2;
 
-	const result = Object.keys(game._currentRoundGet().votes).length;
+	const result =
+		Object.entries(game._currentRoundGet().players)
+			.filter(p => p[1].vote !== null && p[1].vote !== undefined)
+			.length;
 	assert(
 		result === expected,
 		`expected ${expected} votes. got ${result}`
@@ -172,7 +180,12 @@ Deno.test('calculate scores after voting', () => {
 		[player3]: 0,
 	});
 
-	const result = JSON.stringify(game._currentRoundGet().scores);
+	const result = JSON.stringify(
+		Object.fromEntries(
+			Object.entries(game._currentRoundGet().players)
+				.map(p => [ p[0], p[1].score ])
+		)
+	);
 	assert(
 		result === expected,
 		`expected scores of ${expected}. got ${result}`
